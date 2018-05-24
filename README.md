@@ -1,2 +1,3 @@
-# HPE Enterprise Containers as a Service
+# HPE Reference Configuration for Docker Container-as-a-Service on HPE Synergy Composable Infrastructure
+
 
