@@ -1,0 +1,9 @@
+---
+docker_ee_url: 'your_url_here'
+vcenter_password: 'xxxx'
+vm_password: 'xxxx'
+ucp_password: 'zzzz'
+win_password: 'yourpass'
+sysdig_access_key: 'enter_sysdig_access_key'
+rhn_orgid: "YourOrgId"
+rhn_key: "YourActivationKey"

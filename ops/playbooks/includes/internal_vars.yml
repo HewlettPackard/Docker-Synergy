@@ -1,0 +1,41 @@
+ucp_certificates_volume_name: 'ucp-controller-server-certs'
+
+internal_ucp200_ports:
+  - 443/tcp
+  - 2376/tcp
+  - 2377/tcp
+  - 4789/udp
+  - 7946/tcp
+  - 7946/udp
+  - 12376/tcp
+  - 12379-12387/tcp
+
+internal_dtr200_ports:
+  - 80/tcp
+  - 443/tcp
+  - 2377/tcp
+  - 4789/udp
+  - 7946/tcp
+  - 7946/udp
+  - 12376/tcp
+
+internal_wrk200_ports:
+  - 443/tcp
+  - 2377/tcp
+  - 4789/udp
+  - 7946/tcp
+  - 7946/udp
+  - 12376/tcp
+
+internal_ucp_ports:
+  - "{{ internal_ucp200_ports }}"
+
+internal_worker_ports:
+  - "{{ internal_wrk200_ports }}"
+
+internal_dtr_ports:
+  - "{{ internal_dtr200_ports }}"
+
+internal_syslog_ports:
+  - 514/tcp
+  - 514/udp
