@@ -1,2 +1,2 @@
-# Docker-Synergy
+# HPE Enterprise Containers as a Service
 
