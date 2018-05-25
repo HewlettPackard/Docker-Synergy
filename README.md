@@ -9,3 +9,7 @@ run containers on VMs to take advantage of the resource efficient usage of virtu
 for Docker containers, and having the ability to run legacy and new container applications
 side-by-side. Customers deploying Docker containers on a large scale, on Linux and Microsoft
 Windows, should consider HPE Synergy as the deployment infrastructure.
+
+[Online documentation](/ops)
+
+
