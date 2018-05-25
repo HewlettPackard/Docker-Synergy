@@ -1,4 +1,4 @@
-# HPE Reference Configuration for Docker Container-as-a-Service on HPE Synergy Composable Infrastructure
+# HPE Reference Configuration for Docker Containers-as-a-Service on HPE Synergy Composable Infrastructure
 
 
 This solution shows how to architect and deploy a Docker CaaS platform on HPE Synergy
