@@ -569,7 +569,7 @@ production.
     
 <div class="fig fignone" id="solution-config__architecture-3node">
 
-<br /><img class="image" src="media/architecture2.png" /><br />
+<br /><img class="image" src="media/architecture-3node.png" /><br />
 <div><span class="figcap"><span class="fig--title-label"><b>Figure 1. </b></span>Three node HPE Synergy Configuration</span></div><p> </p></div>
   
     
@@ -4846,7 +4846,7 @@ You can find a copy of the inventory as it was when the backup was taken in the 
 </div>
 
 </div>
-<div class="topic nested3" aria-labelledby="ariaid-title72" id="unique_1242341518">
+<div class="topic nested3" aria-labelledby="ariaid-title72" id="unique_1929980734">
 <h4 class="title topictitle4" id="ariaid-title72">Restore UCP and DTR</h4>
  
 <div class="body">
