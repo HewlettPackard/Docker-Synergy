@@ -51,3 +51,17 @@ backend grafana
     server g_{{host}} {{ hostvars[host].ip_addr | ipaddr('address') }}:3000 check
 {% endfor %}
 
+{% if k8s == 'true'%}
+frontend k8s
+    option tcplog
+    log global
+    bind *:6443
+    default_backend k8s
+
+backend k8s
+    balance roundrobin
+{% for host in groups.ucp %}
+    server k8s_{{ host }} {{ hostvars[host].ip_addr | ipaddr('address') }}:6443 check
+{% endfor %}
+
+{% endif %}

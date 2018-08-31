@@ -36,15 +36,20 @@ ntp_servers: ['10.60.1.123','0.us.pool.net.org','1.us.pool.net.org']
 #
 # by default, the latest, stable version of docker-ee is installed, but you can specify the version you want (which is recommended)
 # docker_ee_version: 'docker-ee-17.06.2.ee.6-3.el7.rhel.x86_64'
-docker_ee_version: 'docker-ee-17.06.2.ee.8-3.el7.rhel.x86_64'
-rhel_version: '7.4'
-dtr_version: '2.4.3'
-#dtr_version: 'latest'
-ucp_version: '2.2.7'
-#ucp_version: 'latest'
+# make sure you specify docker_ee_version with the version that went thru QA
+# docker_ee_version: 'docker-ee-17.06.2.ee.16-3.el7.x86_64'
+# replace dtr_version and ucp_version by the actual version number which went thru QA
+rhel_version: '7.5'
+dtr_version: '2.5.3'
+ucp_version: '3.0.4'
 images_folder: '/docker-images'
 license_file: '/root/license.lic'
 ucp_username: 'admin'
+
+#
+# cidr to use for pod IP adresses
+#
+#k8s_pod_cidr: 192.168.0.0/16
 
 #
 # certs dir
@@ -63,10 +68,10 @@ ucp_username: 'admin'
 #dtr_certs_dir: '/root/certs/dtr_certs'
 
 # Monitoring configuration
-cadvisor_version: 'v0.25.0'
-node_exporter_version: 'v1.14.0'
-prometheus_version: 'v1.7.1'
-grafana_version: '4.4.3'
+cadvisor_version: 'v0.28.3'
+node_exporter_version: 'v1.15.0'
+prometheus_version: 'v2.3.2'
+grafana_version: '5.2.3'
 prom_persistent_vol_name: 'prom-db-data'
 prom_persistent_vol_size: '10GB'
 
@@ -113,3 +118,16 @@ monitoring_stack: splunk_demo
 #
 sysdig_agent: 'https://s3.amazonaws.com/download.draios.com/stable/install-agent'
 sysdig_tags: 'location:EnterCity,role:Enterprise CaaS on Synergy,owner:Customer name'
+
+#k8s sysdig restricted control type
+sysdig_restricted_control_role: 'Restricted Control'
+k8s_cluster: 'ucp_hpe-ucp.cloudra.local'
+
+#k8s nfs provisionner role name
+nfs_provisioner_role: 'nfs-provisioner-runner'
+nfs_provisioner_name: "hpe.com/nfs"
+nfs_provisioner_storage_class_name: "nfs"
+#nfs_provisioner_server_ip: vfs3par.cloudra.local
+#nfs_provisioner_server_share: '/vfs3par/vfs3par/fs_clh/share'
+nfs_provisioner_server_ip: clh-nfs.cloudra.local
+nfs_provisioner_server_share: '/k8s'

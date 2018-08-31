@@ -24,8 +24,9 @@
 #- import_playbook: playbooks/install_logspout.yml
 #- import_playbook: playbooks/config_monitoring.yml
 - import_playbook: playbooks/splunk_demo.yml
-- import_playbook: playbooks/monitoring.yml
-- import_playbook: playbooks/monitoring_win.yml
+- import_playbook: playbooks/splunk_uf.yml
+- import_playbook: playbooks/splunk_k8s.yml
+- import_playbook: playbooks/splunk_uf_win.yml
 - import_playbook: playbooks/config_scheduler.yml
 - import_playbook: playbooks/scale_dtr.yml
 - import_playbook: playbooks/reconfigure_dtr.yml

@@ -81,6 +81,46 @@
         fstype: xfs
         state: mounted
 
+#
+# NFS Share for K8S PVs
+#
+    - name: Check for partitions on 3rd disk
+      parted:
+        state: info
+        device: /dev/sdc
+        number: 1
+      register: Disk3Info
+
+    - set_fact:
+        partPresent: "{{ Disk3Info.partitions[0] is defined }}"
+
+    - name: Create partition on 3rd disk
+      parted:
+        device: /dev/sdc
+        number: 1
+        state: present
+      when: partPresent == false
+
+    - name: Create filesystem on 3rd disk
+      filesystem:
+        fstype: xfs
+        dev: '/dev/sdc1'
+      when: partPresent == false
+
+    - name: Create Share for K8S Persistent Volumes
+      file:
+        path: "{{ nfs_provisioner_server_share }}"
+        state: directory
+        mode: 0777
+      when: partPresent == false
+
+    - name: Mount filesystem
+      mount:
+        path: "{{ nfs_provisioner_server_share }}"
+        src: '/dev/sdc1'
+        fstype: xfs
+        state: mounted
+
     - name: Install NFS server
       yum:
         name: "{{ item }}"

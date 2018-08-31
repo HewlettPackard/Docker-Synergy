@@ -21,6 +21,7 @@
 
   vars_files:
     - ../group_vars/vars
+    - includes/internal_vars.yml
 
   environment: "{{ env }}"
 

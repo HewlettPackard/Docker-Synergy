@@ -40,7 +40,9 @@
             dest: "{{ windows_vdvs_directory }}install-vdvs.ps1"
 
         - name: Install Windows vSphere Docker Volume Service
-          win_shell: .\install-vdvs.ps1 {{ windows_vdvs_path }}_{{ windows_vdvs_version }}.zip
+          win_shell: |
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            .\install-vdvs.ps1 {{ windows_vdvs_path }}_{{ windows_vdvs_version }}.zip
           args:
             chdir: "{{ windows_vdvs_directory }}"
 

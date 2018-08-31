@@ -97,4 +97,28 @@
 
     - debug: msg="Availability={{resp.json.Spec.Availability}} Role={{resp.json.Spec.Role}} State={{resp.json.Status.State}}"
       when: _debug is defined
+#
+# set orchestrator type
+#
+    - name: Clear Orchestrator type "swarm"
+      command: "docker node update --label-rm com.docker.ucp.orchestrator.swarm {{ inventory_hostname }}"
+      when: orchestrator == "kubernetes"
+      failed_when: false
+      delegate_to: "{{ ucp_instance }}"
+
+    - name: Set Ochestrator type Kubernetes
+      command: "docker node update --label-add com.docker.ucp.orchestrator.kubernetes=true {{ inventory_hostname }}"
+      when: orchestrator == "kubernetes"
+      delegate_to: "{{ ucp_instance }}"
+
+    - name: Clear Orchestrator type "Kubernetes"
+      command: docker node update --label-rm com.docker.ucp.orchestrator.kubernetes {{ inventory_hostname }}
+      when: orchestrator == "swarm"
+      failed_when: false
+      delegate_to: "{{ ucp_instance }}"
+
+    - name: Set Orchestrator type "swarm"
+      command: "docker node update --label-add com.docker.ucp.orchestrator.swarm=true {{ inventory_hostname }}"
+      when: orchestrator == "swarm"
+      delegate_to: "{{ ucp_instance }}"
 

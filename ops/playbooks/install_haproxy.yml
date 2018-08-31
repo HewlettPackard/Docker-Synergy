@@ -21,15 +21,32 @@
 
   vars_files:
     - ../group_vars/vars
+    - includes/internal_vars.yml
 
   environment: "{{ env }}"
 
-  roles:
-    - role: hpe.openports
-      hpe_openports_ports:
-        - 80/tcp
-        - 443/tcp
   tasks:
+
+    - set_fact: 
+        open_ports:
+          - "{{ internal_dtr_lb_ports }}"
+      when: inventory_hostname in groups.dtr_lb
+ 
+    - set_fact:
+        open_ports: "{{ internal_ucp_lb_ports }}"
+      when: inventory_hostname in groups.ucp_lb
+ 
+    - set_fact:
+        open_ports: "{{ internal_worker_lb_ports }}"
+      when: inventory_hostname in groups.worker_lb
+ 
+    - name: Open  ports  in the firewall
+      firewalld:
+        port: "{{ item }}"
+        immediate: true
+        permanent: true
+        state: enabled
+      with_items: "{{ open_ports }}"
 
     - name: Install Required Pkgs for seboolean module
       yum:

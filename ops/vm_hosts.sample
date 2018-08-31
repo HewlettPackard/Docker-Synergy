@@ -25,17 +25,20 @@ hpe-dtr03 ip_addr='10.60.59.16/16' esxi_host='esxi-hpe-3.cloudra.local'
 cpus='2' 
 ram='16384' 
 disk2_size='500'
+# make sure swarm is specified for DTR otherwise DTR machines will be configured in mixed mode and the deployment  "may" fail in some cases
+orchestrator=swarm
 
 ## WORKER
 [worker]
 hpe-worker01 ip_addr='10.60.59.21/16' esxi_host='esxi-hpe-1.cloudra.local'
 hpe-worker02 ip_addr='10.60.59.22/16' esxi_host='esxi-hpe-2.cloudra.local'
-hpe-worker03 ip_addr='10.60.59.23/16' esxi_host='esxi-hpe-3.cloudra.local'
+hpe-worker03 ip_addr='10.60.59.23/16' esxi_host='esxi-hpe-3.cloudra.local' orchestrator=swarm
 
 [worker:vars]
 cpus='4'
 ram='65536'
 disk2_size='500'
+orchestrator=kubernetes
 
 ## LOAD BALANCERS
 [ucp_lb]
@@ -98,6 +101,8 @@ cpus='4'
 ram='65536'
 disk1_size='100'
 disk2_size='500'
+# Kubernetes 1.8 does not support windows worker nodes
+orchestrator=swarm
 
 [all_vms:children]
 vms

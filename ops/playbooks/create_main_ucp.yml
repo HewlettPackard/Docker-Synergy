@@ -89,6 +89,7 @@
         -v /tmp/license.lic:/config/docker_subscription.lic
         docker/ucp:{{ ucp_version }} install 
           --host-address {{ ip_addr | ipaddr('address') }}  
+          --pod-cidr {{ k8s_pod_cidr | default ('192.168.0.0/16') }}
           {{ san_all_formatted }}
           {{ external_server_cert_switch }}
       vars:

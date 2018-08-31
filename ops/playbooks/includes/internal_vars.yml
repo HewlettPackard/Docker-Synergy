@@ -1,4 +1,21 @@
+k8s: "{{ k8s_enabled | default('true') }}"
+
 ucp_certificates_volume_name: 'ucp-controller-server-certs'
+
+internal_ucpk8s_ports:
+  - 179/tcp
+  - 443/tcp
+  - 2376/tcp
+  - 2377/tcp
+  - 4789/udp
+  - 6443/tcp
+  - 6444/tcp
+  - 7946/tcp
+  - 7946/udp
+  - 10250/tcp
+  - 12376/tcp
+  - 12378/tcp
+  - 12379-12387/tcp
 
 internal_ucp200_ports:
   - 443/tcp
@@ -9,6 +26,18 @@ internal_ucp200_ports:
   - 7946/udp
   - 12376/tcp
   - 12379-12387/tcp
+
+internal_dtrk8s_ports:
+  - 80/tcp
+  - 443/tcp
+  - 179/tcp
+  - 4789/udp
+  - 6444/tcp
+  - 7946/tcp
+  - 7946/udp
+  - 10250/tcp
+  - 12376/tcp
+  - 12378/tcp
 
 internal_dtr200_ports:
   - 80/tcp
@@ -27,15 +56,49 @@ internal_wrk200_ports:
   - 7946/udp
   - 12376/tcp
 
+internal_wrkk8s_ports:
+  - 179/tcp
+  - 4789/udp
+  - 6444/tcp
+  - 7946/tcp
+  - 7946/udp
+  - 10250/tcp
+  - 12376/tcp
+  - 12378/tcp
+ 
+
 internal_ucp_ports:
-  - "{{ internal_ucp200_ports }}"
+  - "{% if k8s == 'true' %}{{ internal_ucpk8s_ports }}{% else %}{{  internal_ucp200_ports }}{% endif %}"
 
 internal_worker_ports:
-  - "{{ internal_wrk200_ports }}"
+  - "{% if k8s == 'true' %}{{ internal_wrkk8s_ports }}{% else %}{{  internal_wrk200_ports }}{% endif %}"
 
 internal_dtr_ports:
-  - "{{ internal_dtr200_ports }}"
+  - "{% if k8s == 'true' %}{{ internal_dtrk8s_ports }}{% else %}{{  internal_dtr200_ports }}{% endif %}"
 
 internal_syslog_ports:
   - 514/tcp
   - 514/udp
+
+
+internal_ucp200_lb_ports:
+  - 80/tcp
+  - 443/tcp
+
+internal_ucpk8s_lb_ports:
+  - 80/tcp
+  - 443/tcp
+  - 6443/tcp
+
+internal_ucp_lb_ports:
+  - "{% if k8s == 'true' %}{{ internal_ucpk8s_lb_ports }}{% else %}{{  internal_ucp200_lb_ports }}{% endif %}"
+
+internal_dtr_lb_ports:
+  - 80/tcp
+  - 443/tcp
+
+internal_worker_lb_ports:
+  - 80/tcp
+  - 443/tcp
+
+
