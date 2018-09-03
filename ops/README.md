@@ -664,9 +664,10 @@ non-containerized applications on a common VM platform. This Reference Configura
 provides a solution for IT operations, addressing the need 
 for a production-ready environment that is easy to deploy and manage.  </p>
 
-
-<p class="p">This document describes the best practices for deploying and operating HPE Enterprise
-Containers as a Service with Docker Enterprise Edition (EE). It describes how to automate the
+    
+<p class="p">This release supports Kubernetes via Docker Enterprise Edition (EE) 2.0, which is the only platform that manages and secures applications on Kubernetes 
+  in multi-Linux, multi-OS and multi-cloud customer environments. This document describes the best practices for deploying and operating HPE Enterprise
+Containers as a Service with Docker Enterprise Edition (EE). It shows how to automate the
 provisioning of the environment using a set of Ansible playbooks. It also outlines a
 set of manual steps to harden, secure and audit the overall status of the system. </p>
 
