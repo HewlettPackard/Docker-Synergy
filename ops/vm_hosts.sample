@@ -9,7 +9,7 @@ hpe-ucp03 ip_addr='10.60.59.13/16' esxi_host='esxi-hpe-3.cloudra.local'
 
 [ucp:vars]
 cpus='4'
-ram='8192'
+ram='16384'
 disk2_size='500'
 
 # DTR
