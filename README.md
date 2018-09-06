@@ -18,5 +18,6 @@ operating HPE Enterprise Containers as a Service with Docker Enterprise Edition 
 environment using a set of Ansible playbooks. It also outlines a set of manual steps to harden, secure and audit the overall status of the 
 system.
 
+[Release Notes 2.0](/ops/ReleaseNotes20.md)
 
 [Online documentation](/ops)
