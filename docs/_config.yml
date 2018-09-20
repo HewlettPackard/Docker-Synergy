@@ -1,3 +1,5 @@
 baseurl: /Docker-Synergy
 title: [Docker Caas on HPE Synergy]
 description: [HPE Reference Configuration for Docker Containers as a Service on HPE Synergy Composable Infrastructure]
+theme: jekyll-theme-slate
+show_downloads: "false"
