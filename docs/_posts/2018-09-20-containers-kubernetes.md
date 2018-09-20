@@ -1,9 +1,12 @@
 ---
 layout: post
+title: Containers, orchestrators and Kubernetes
 author: gabrielmcg
 ---
 
-# What is a container?
+What is a container? why do you need an orchestrator? and why is Kubernetes eating the DevOps world.
+
+## What is a container?
 
 Containers are often viewed as lightweight Virtual Machines (VM). While a VM has its own complete operating system sitting on 
 top of a hypervisor, containers are sandboxes running directly on top of the host system’s kernel and, as a result, are faster 
@@ -30,7 +33,7 @@ for packaging, composition, deployment, scaling and re-use.  However, to deploy 
 using all these containers, another layer of management software is required and that is role of the **container orchestrator**.
 
 
-# What is  container orchestrator?
+## What is  container orchestrator?
 
 A container orchestrator is a piece of software that attempts to automate the operations that would traditionally 
 be performed by a system administrator including:
@@ -50,7 +53,7 @@ of resources. In addition, the average lifetime of a container also decreases si
 removes or relocates containers when auto-scaling or node failure occurs.
 
 
-# What is Kubernetes?
+## What is Kubernetes?
 
 
 Kubernetes is an open-source container orchestrator project, founded by Google in 2014 and based on the internal 
@@ -65,7 +68,7 @@ public cloud and hybrid deployments using a single technology and avoiding vendo
 grip Kubernetes has on the DevOps mindset.  
 
 
-What is DevOps?
+## What is DevOps?
 
 DevOps is a culture that attempts to bring speed and agility to an organization that in the past might have had monthly or 
 quarterly release cycles, but that now requires daily or even hourly updates to remain competitive. It involves a 
