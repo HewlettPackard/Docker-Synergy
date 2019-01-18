@@ -36,12 +36,12 @@ backend ucp_stats_backend
 
 frontend ucp_443
   mode tcp
-  bind 0.0.0.0:443
+  bind {{ loadbalancers.ucp.public_vip }}:443
   default_backend ucp_443_backend
 
 backend ucp_443_backend
   mode tcp
-  option httpchk GET /_ping HTTP/1.1\r\nHost:\ {{ ucp_lb_fqdn }}
+  option httpchk GET /_ping HTTP/1.1\r\nHost:\ {{ loadbalancers.ucp.public_fqdn }}
   balance source
 {% for host in groups.ucp %}
   server {{ host }} {{ hostvars[host].ip_addr | ipaddr('address') }}:443  weight 100 check check-ssl verify none
@@ -50,13 +50,42 @@ backend ucp_443_backend
 frontend k8s_6443
   option tcplog
   log global
-  bind *:6443
+  bind {{ loadbalancers.ucp.public_vip }}:6443
   default_backend k8s_6443_backend
 
 backend k8s_6443_backend
   balance roundrobin
 {% for host in groups.ucp %}
   server {{host}} {{ hostvars[host].ip_addr | ipaddr('address') }}:6443 check
+{% endfor %}
+
+frontend dtr_443
+  option tcplog
+  log global
+  bind {{ loadbalancers.dtr.public_vip }}:80
+  redirect scheme https code 301 if !{ ssl_fc }
+  bind {{ loadbalancers.dtr.public_vip }}:443
+  default_backend dtr_443_backend
+
+backend dtr_443_backend
+  balance roundrobin
+{% for host in groups.dtr %}
+  server {{ host }} {{ hostvars[host].ip_addr | ipaddr('address') }}:443 check
+{% endfor %}
+
+frontend worker
+  option tcplog
+  log global
+  bind {{ loadbalancers.worker.public_vip }}:80
+  bind *:80
+  redirect scheme https code 301 if !{ ssl_fc }
+  bind {{ loadbalancers.worker.public_vip }}:443
+  default_backend worker_backend
+
+backend worker_backend
+  balance roundrobin
+{% for host in groups.worker %}
+  server {{ host }} {{ hostvars[host].ip_addr | ipaddr('address') }}:443 check
 {% endfor %}
 
 frontend grafana
@@ -70,6 +99,6 @@ backend grafana_backend
   mode http
   balance source
 {% for host in groups.ucp %}
-    server {{host}} {{ hostvars[host].ip_addr | ipaddr('address') }}:3000 check
+  server {{host}} {{ hostvars[host].ip_addr | ipaddr('address') }}:3000 check
 {% endfor %}
 
