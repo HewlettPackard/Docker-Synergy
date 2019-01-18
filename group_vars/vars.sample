@@ -8,6 +8,25 @@ vm_username: 'root'
 vm_template: 'linux-template-name'
 vm_portgroup: 'NameOfPortGroup'
 
+# Simplivity configuration
+simplivity_username: 'Administrator@vsphere.local'
+#omnistack_ovc: ['10.10.173.109','10.10.173.110','10.10.173.111']
+omnistack_ovc: ['10.10.173.109']
+backup_policies:
+ - name: 'hpe-bronze'
+   days: 'All'
+   start_time: '11:30'
+   frequency: '1440'
+   retention: '43200'
+ - name: 'hpe-gold'
+   days: 'All'
+   start_time: '00:00'
+   frequency: '60'
+   retention: '43200'
+dummy_vm_prefix: 'hpe-VM3'
+docker_volumes_policy: 'hpe-gold'
+svt_cleanup: true
+
 # the folder name is understood relative to the selected datacenter
 folder_name: '/NameOfFolder'
 datastores: ['NameOfDataStore']
@@ -15,14 +34,16 @@ disk2: '/dev/sdb'
 disk2_part: '/dev/sdb1'
 vsphere_plugin_version: '0.21' 
 
-# enable_windows: if defined true the creatation of windows 2016 worker nodes will be actioned, default is false
-enable_windows: false
+# enable_windows: is obsolete, ignored
+#enable_windows: false
 win_vm_template: 'windows-template-name'
 win_username: 'Administrator'
 windows_vdvs_ps: 'https://raw.githubusercontent.com/vmware/vsphere-storage-for-docker/master/install-vdvs.ps1'
 windows_vdvs_path: 'https://vmware.bintray.com/vDVS/vsphere-storage-for-docker_windows'
 windows_vdvs_version: '0.21' # was 0.17
 windows_vdvs_directory: 'C:\Users\Administrator\Downloads\'
+windows_winrm_script: 'http://yourlocalwebsercver/ConfigureRemotingForAnsible.ps1'
+#windows_update: true
 
 # Networking
 nic_name: 'ens192'
@@ -32,16 +53,14 @@ domain_name: 'cloudra.local'
 ntp_servers: ['10.60.1.123','0.us.pool.net.org','1.us.pool.net.org']
 
 # Docker configuration
-# docker_ee_url: is defined in group_vars/vault, should be kept secret
-#
-# by default, the latest, stable version of docker-ee is installed, but you can specify the version you want (which is recommended)
-# docker_ee_version: 'docker-ee-17.06.2.ee.6-3.el7.rhel.x86_64'
-# make sure you specify docker_ee_version with the version that went thru QA
-# docker_ee_version: 'docker-ee-17.06.2.ee.16-3.el7.x86_64'
-# replace dtr_version and ucp_version by the actual version number which went thru QA
-rhel_version: '7.5'
-dtr_version: '2.5.3'
-ucp_version: '3.0.4'
+#docker_ee_url: is defined in group_vars/vault, should be kept secret
+docker_ee_reponame: stable-17.06
+#docker_ee_version: 'docker-ee-17.06.2.ee.17-3.el7.x86_64'
+docker_ee_version_windows: '17.06'
+rhel_version: '7'
+dtr_version: '2.5.6'
+ucp_version: '3.0.7'
+
 images_folder: '/docker-images'
 license_file: '/root/license.lic'
 ucp_username: 'admin'
@@ -127,7 +146,33 @@ k8s_cluster: 'ucp_hpe-ucp.cloudra.local'
 nfs_provisioner_role: 'nfs-provisioner-runner'
 nfs_provisioner_name: "hpe.com/nfs"
 nfs_provisioner_storage_class_name: "nfs"
+nfs_provisioner_namespace: nfsstorage
 #nfs_provisioner_server_ip: vfs3par.cloudra.local
 #nfs_provisioner_server_share: '/vfs3par/vfs3par/fs_clh/share'
 nfs_provisioner_server_ip: clh-nfs.cloudra.local
 nfs_provisioner_server_share: '/k8s'
+
+
+#storage driver for docker nodes: accepted values are 'overlay2' and devicemapper
+#docker_storage_driver: overlay2
+
+#
+# Load Balancers, comment out if using the old-style load balancers (ucp_lb, dtr_lb, worker_lb)
+#
+loadbalancers:
+  ucp:
+    public_interface: 'ens192'
+    public_vip: '10.60.59.135'
+    public_fqdn: hpe-ucp.cloudra.local
+    virtual_router_id: 51
+  dtr:
+    public_interface: 'ens192'
+    public_vip: '10.60.59.136'
+    public_fqdn: hpe-dtr.cloudra.local
+    virtual_router_id: 52
+  worker:
+    public_interface: 'ens192'
+    public_vip: '10.60.59.137'
+    public_fqdn: hpe-wrk.cloudra.local
+    virtual_router_id: 53
+
