@@ -15,6 +15,7 @@
 ### 
 ---
 - hosts: all_vms
+  name: Delete ALl VMs
   gather_facts: false
   connection: local
   user: remote
@@ -52,7 +53,65 @@
         datacenter: "{{ datacenter }}"
         folder: "{{ datacenter }}/vm{{ folder_name }}"
         name: "{{ inventory_hostname }}"
+        disk: "{{ disks_specs }}"
         state: absent
       vars:
         ansible_connection: local
 
+#############################################################################xxx
+# 
+# play 2: SimpliVity Specific, delete Dummy VMs and backup policies
+#
+################################################################################
+
+- hosts: localhost
+  gather_facts: false
+  name: Cleanup SimpliVity Specific
+  connection: local
+  user: remote
+  become: false
+
+  vars_files:
+    - ../group_vars/vars
+    - ../group_vars/vault
+
+  environment: "{{ env }}"
+
+  tasks:
+  - block:
+    - name: Build the list of Dummy VM names
+      set_fact: dummy_vms="{{ dummy_vms | default([]) + [ prefix+'-in-dockvols-'+item  ] }}"
+      vars:
+        prefix: "{{ dummy_vm_prefix }}"
+      with_items:
+        - "{{ datastores }}"
+
+    - name: Power off Dummy VMs
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        datacenter: "{{ datacenter }}"
+        folder: "{{ datacenter }}/vm{{ folder_name }}"
+        name: "{{ item }}"
+        state: poweredoff
+      vars:
+        ansible_connection: local
+      with_items: "{{ dummy_vms }}"
+      failed_when: false
+
+    - name: Delete  Dummy VMs
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        datacenter: "{{ datacenter }}"
+        folder: "{{ datacenter }}/vm{{ folder_name }}"
+        name: "{{ item }}"
+        state: absent
+      vars:
+        ansible_connection: local
+      with_items: "{{ dummy_vms }}"
+    when: svt_cleanup is defined and svt_cleanup

@@ -23,7 +23,6 @@
     - ../group_vars/vars
 
   vars:
-    dtr_lb: "{{ groups['dtr_lb'][0] }}.{{ domain_name }}"
 
   environment: "{{ env }}"
 
@@ -36,13 +35,6 @@
     - name: Add proxy details
       template: src=../templates/http-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/http-proxy.conf
       when: env.http_proxy is defined or env.https_proxy is defined
-      notify: Restart Docker
-
-    - name: Add insecure registry
-      lineinfile:
-        path: /usr/lib/systemd/system/docker.service
-        regexp: 'ExecStart=.*'
-        line: 'ExecStart=/usr/bin/dockerd --insecure-registry {{ dtr_lb }}'
       notify: Restart Docker
 
     - meta: flush_handlers
@@ -62,3 +54,42 @@
         state: restarted
         daemon_reload: yes
 
+#####################################################################
+#
+# Play 2: Install vSPhere plugin on windows workers
+#
+#####################################################################
+- hosts: win_worker
+  gather_facts: false
+  connection: local
+  user: remote
+  become: false
+
+  vars_files:
+    - ../group_vars/vars
+    - ../group_vars/vault
+
+#  environment: "{{ env }}"
+
+  tasks:
+
+  - name: Download vSphere Docker Volume Service Installer
+    win_get_url:
+      url: "{{ windows_vdvs_ps }}"
+      proxy_url: "{{ proxy_url }}"
+      dest: "{{ windows_vdvs_directory }}install-vdvs.ps1"
+    vars:
+      proxy_url: "{% if env.http_proxy is defined %}http://{{ env.http_proxy }}{% endif %}"
+
+  - name: Install Windows vSphere Docker Volume Service
+    win_shell: |
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+      .\install-vdvs.ps1 {{ windows_vdvs_path }}_{{ windows_vdvs_version }}.zip
+    args:
+      chdir: "{{ windows_vdvs_directory }}"
+
+  - name: Configure Windows vSphere Docker Volume Service
+    win_service:
+      name: vdvs
+      start_mode: auto
+      state: started

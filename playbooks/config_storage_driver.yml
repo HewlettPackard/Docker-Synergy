@@ -12,30 +12,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-###
+### 
 ---
-- name: Scale UCP
-  hosts: ucp
-  serial: 1
+- name: Config local drives for Docker hosts
+  hosts: docker
   gather_facts: false
+  become_user: root
+  become: true
 
   vars_files:
     - ../group_vars/vars
-    - ../group_vars/vault
-    - includes/internal_vars.yml
 
-  pre_tasks:
-    - include_tasks: includes/find_ucp.yml
-      vars:
-        ping_servers: "{{ groups.ucp }}"
-    - debug: var=ucp_instance
-      when: _debug is defined
+  environment:
+    - "{{ env }}"
 
-  roles:
-    - role: ucp
-      ARG_UCP_IP:        "{{ ucp_instance }}.{{ domain_name }}"
-      ARG_UCP_USER:      "{{ ucp_username }}"
-      ARG_UCP_PASSWORD:  "{{ ucp_password }}"
-      ARG_ADVERTIZE_IP:  "{{ ucp_instance }}.{{ domain_name }}:2377"
-      ucp_role_ports:    "{{ internal_ucp_ports }}"
-      ucp_role_join_delay: 180
+  tasks:
+
+    - include_tasks: includes/storage_driver_devicemapper.yml
+      when: docker_storage_driver is defined and docker_storage_driver == 'devicemapper'
+
+    - include_tasks: includes/storage_driver_overlay2.yml
+      when: docker_storage_driver is not defined or docker_storage_driver == 'overlay2'
+
