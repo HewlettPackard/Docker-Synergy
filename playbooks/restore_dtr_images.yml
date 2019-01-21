@@ -20,7 +20,6 @@
   become: true
 
   vars_files:
-    - ../group_vars/vars
     - ../group_vars/backups
 
   environment: "{{ env }}"

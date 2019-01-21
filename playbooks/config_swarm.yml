@@ -19,10 +19,6 @@
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
   vars:
     san_fqdns: "{% for host in groups['ucp']+groups['ucp_lb'] %}--san {{ host }}.{{ domain_name }} {% endfor %}"
     san_ips: "{% for host in groups['ucp']+groups['ucp_lb'] %} --san {{ hostvars[host].ip_addr | ipaddr('address') }} {% endfor %}"

@@ -19,8 +19,6 @@
   gather_facts: false
 
   vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
     - ../group_vars/backups
 
   environment:
@@ -132,9 +130,8 @@
          src: "{{ item }}"
          dest: "{{ res.path }}/"
       with_items:
-        - ../vm_hosts
-        - ../group_vars/vars
-        - ../group_vars/backups
+        - ../hosts
+        - ../group_vars
       delegate_to: localhost
 
     - name: Backup the Metadata as well

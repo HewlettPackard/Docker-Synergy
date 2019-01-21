@@ -16,11 +16,10 @@
 ---
 - name: Install sysdig
   hosts: docker
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
+
   tasks:
     #
     # Open required firewall ports
@@ -68,10 +67,6 @@
 - hosts: local
   connection: local
   gather_facts: false
-
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
   tasks:
 

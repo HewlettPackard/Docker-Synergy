@@ -14,16 +14,17 @@
 # limitations under the License.
 ### 
 ---
-- hosts: linux_box
+- name: Install rsyslog on Linux boxes
+  hosts: linux_box
   gather_facts: false
   become_user: root
   become: true
 
   vars_files:
-    - ../group_vars/vars
     - includes/internal_vars.yml
 
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   roles:
     - role: hpe.openports

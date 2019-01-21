@@ -20,10 +20,8 @@
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   roles:
     - role: hpe.openports

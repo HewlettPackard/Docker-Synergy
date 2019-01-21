@@ -25,11 +25,8 @@
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
 
@@ -62,10 +59,6 @@
   connection: local
   user: remote
   become: false
-
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
   tasks:
 

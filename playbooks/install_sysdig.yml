@@ -20,11 +20,8 @@
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
     #
@@ -150,14 +147,14 @@
             - /usr:/host/usr:ro
         shm_size: 512m
    
-
+#
+# Install sysdig on non-docker hosts
+#
 - name: Install sysdig agent on non docker hosts (linux)
   hosts: vms:!docker
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
+  environment:
+    - "{{ env }}"
 
-  environment: "{{ env }}"
   tasks:
     #
     # Determine if firewalld is enabled and set 

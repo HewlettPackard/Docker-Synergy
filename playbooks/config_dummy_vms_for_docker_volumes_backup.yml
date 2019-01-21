@@ -16,12 +16,6 @@
 ---
 - hosts: ucp_main
   gather_facts: false
-  become_user: root
-  become: true
-
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
   vars:
     powercli_script: '/tmp/vols.ps1'
@@ -30,6 +24,7 @@
 
   tasks:
     - name: Create Dummy VMs
+      delegate_to: localhost
       vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"

@@ -14,15 +14,14 @@
 # limitations under the License.
 ### 
 ---
-- hosts: docker:&linux_box
+- name: Install logspout on Docker / Linux hosts
+  hosts: docker:&linux_box
   gather_facts: false
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
 

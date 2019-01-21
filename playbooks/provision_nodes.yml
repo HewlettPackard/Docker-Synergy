@@ -19,11 +19,8 @@
   gather_facts: false
   connection: local
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
 
@@ -67,10 +64,6 @@
   hosts: vm_wrk_win
   gather_facts: false
   connection: local
-
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
 #  environment: "{{ env }}"
 
@@ -125,13 +118,9 @@
 - name: Deploy Server Profile from Template, selecting the right connection for Management NIC
   hosts: bm_wrk_lnx
   gather_facts: no
-  vars:
-    - config: "{{ playbook_dir }}/oneview_config.json"
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
 
@@ -140,10 +129,10 @@
     - name: Gather facts about the Server Profile Template to retrieve connection information
       oneview_server_profile_template_facts:
 #        config: "{{ config }}"
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         name: "{{ ov_template }}"
       delegate_to: localhost
 
@@ -153,22 +142,20 @@
     - name: Gather facts about a Server Profile by name
       oneview_server_profile_facts:
 #        config: "{{ config }}"
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         name: "{{ inventory_hostname }}"
       delegate_to: localhost
-
-    - debug: var=server_profiles
 
     - name: Gather facts about server hardware
       oneview_server_hardware_facts:
 #        config: "{{ config }}"
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         name: "{{ enclosure }}, bay {{ server_profiles[0].enclosureBay }}"
       when: server_profiles | length > 0
       delegate_to: localhost
@@ -180,17 +167,16 @@
     - set_fact: touch_profile='{% if server_hardwares[0].powerState != 'Off' %}false{% else %}true{% endif %}'
       when: server_hardwares is defined and server_hardwares | length > 0
     - debug: var=touch_profile
-    - debug: var=ov_osdp
 
     - name : "Create server profile with deployment plan {{ ov_osdp }}"
       delegate_to: localhost
       when: touch_profile == true
       oneview_server_profile:
 #        config: "{{ config }}"
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         state: "present"
         data:
           name: "{{ inventory_hostname }}"
@@ -232,10 +218,10 @@
     - name: Power On the server hardware
       oneview_server_hardware:
 #        config: "{{ config }}"
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         state: power_state_set
         data:
             name : '{{ server_name }}'

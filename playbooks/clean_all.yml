@@ -19,11 +19,8 @@
   gather_facts: false
   connection: local
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
     - name: Power off VMs
@@ -67,11 +64,8 @@
   name: Cleanup SimpliVity Specific
   connection: local
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
   - block:
@@ -120,10 +114,6 @@
   gather_facts: false
   connection: local
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
   environment: 
     - "{{ env }}"
 
@@ -133,20 +123,20 @@
 
     - name: Gather facts about a Server Profile by name
       oneview_server_profile_facts:
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         name: "{{ inventory_hostname }}"
       delegate_to: localhost
 
     - name: Power Off the server hardware
       when: server_profiles | length > 0
       oneview_server_hardware:
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         state: power_state_set
         data:
             name : '{{ enclosure }}, bay {{ server_profiles[0].enclosureBay }}'
@@ -158,10 +148,10 @@
     - name: Gather facts about server hardware
       when: server_profiles | length > 0
       oneview_server_hardware_facts:
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         name: "{{ enclosure }}, bay {{ server_profiles[0].enclosureBay }}"
       delegate_to: localhost
 
@@ -171,10 +161,10 @@
     - name: Delete the Server Profile If it exists
       when: server_profiles | length > 0
       oneview_server_profile:
-        hostname: "{{ oneview_config.hostname }}"
-        username: "{{ oneview_config.username }}"
-        password: "{{ oneview_config.password }}"
-        api_version: "{{ oneview_config.api_version }}"
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
         state: "absent"
         data:
           name: "{{ inventory_hostname }}"

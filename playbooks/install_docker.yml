@@ -20,11 +20,8 @@
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
 
@@ -124,11 +121,8 @@
   user: remote
   become: false
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   vars:
     proxy_switch: "{% if  env.http_proxy is defined  %}-Proxy http://{{ env.http_proxy  }}{% endif %}"
