@@ -1,5 +1,22 @@
+ansible_user: '{{ win_username }}'
+ansible_password: '{{ win_password }}'
+ansible_port: 5986
+ansible_connection: winrm
+ansible_winrm_server_cert_validation: ignore
+ansible_winrm_operation_timeout_sec: 250
+ansible_winrm_read_timeout_sec: 300
+windows_timezone: 15
+
+cpus: '4'
+ram: '65536'
+disk1_size: '100'
+disk2: 'placeholder'
+disk2_size: '500'
+disk2_part: 'placeholder'
+node_policy: 'clh-bronze'
+
 networks:
-  - name:  '{{ vm_portgroup }}'
+  - name: '{{ vm_portgroup }}'
     ip:  "{{ ip_addr | ipaddr('address') }}"
     netmask: "{{ ip_addr | ipaddr('netmask') }}"
     gateway: "{{ gateway }}"
@@ -15,12 +32,3 @@ disks_specs:
   - size_gb: '{{ disk2_size }}'
     type: thin
     datastore: "{{ datastores | random }}"
-
-disk2: '/dev/sdb'
-disk2_part: '/dev/sdb1'
-
-cpus: '4'
-ram: '16384'
-disk2_size: '500'
-node_policy: 'clh-bronze'
-

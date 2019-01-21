@@ -55,7 +55,7 @@
           src: ../templates/splunk/splunk_demo/splunk.yml.j2
           dest: /root/scripts/monitoring/splunk.yml
 
-      - name: Deploy Splunk Stack
+      - name: "Deploying Splunk Stack from {{ ucp_instance }}"
         command: docker stack deploy --compose-file splunk.yml splunk_demo
         args:
           chdir: /root/scripts/monitoring

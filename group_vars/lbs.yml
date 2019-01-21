@@ -14,3 +14,11 @@ disks_specs:
     type: thin
     datastore: "{{ datastores | random }}"
 
+# in case we add a drive
+disk2: '/dev/sdb'
+disk2_part: '/dev/sdb1'
+
+cpus: '2'
+ram: '4096'
+node_policy: 'clh-bronze'
+

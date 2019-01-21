@@ -14,7 +14,7 @@
 # limitations under the License.
 ### 
 ---
-- hosts: docker
+- hosts: docker:&linux_box
   gather_facts: false
   become_user: root
   become: true
@@ -59,7 +59,7 @@
 # Play 2: Install vSPhere plugin on windows workers
 #
 #####################################################################
-- hosts: win_worker
+- hosts: docker:&windows_box
   gather_facts: false
   connection: local
   user: remote

@@ -1,0 +1,6 @@
+oneview_config:
+  hostname: synergy1.am2.cloudra.local
+  username: Administrator
+  password: Just4m3hp
+  api_version: 600
+#  image_streamer_ip: 10.10.172.122

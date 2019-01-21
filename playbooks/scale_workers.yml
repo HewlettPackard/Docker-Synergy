@@ -15,7 +15,7 @@
 ###
 ---
 - name: Join Workers (Linux)
-  hosts: worker
+  hosts: worker:&linux_box
   gather_facts: false
 
   vars_files:
@@ -45,7 +45,7 @@
 #
 ###############################################################
 - name: Join Workers (Windows)
-  hosts: win_worker
+  hosts: worker:&windows_box
   gather_facts: false
 
   vars_files:

@@ -14,7 +14,7 @@
 # limitations under the License.
 ### 
 ---
-- hosts: vms
+- hosts: linux_box
   gather_facts: false
   become_user: root
   become: true
@@ -35,4 +35,3 @@
         cmd: subscription-manager register --org="{{rhn_orgid}}" --activationkey="{{rhn_key}}" 
         #cmd: subscription-manager register --username="{{redhat_user}}" --password="{{redhat_pass}}" --auto-attach
       register: res
-

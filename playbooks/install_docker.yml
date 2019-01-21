@@ -15,7 +15,7 @@
 ### 
 ---
 - name: Install Docker (Redhat)
-  hosts: docker
+  hosts: docker:&linux_box
   gather_facts: false
   become_user: root
   become: true
@@ -93,6 +93,12 @@
         gpgcheck: yes
         gpgkey: $dockerurl/gpg
 
+    - name: Enable firewall
+      systemd:
+        name: firewalld
+        enabled: yes
+        state: started
+
     - name: Install Docker
       yum:
         name: '{{ docker_ee_version | default("docker-ee") }}'
@@ -112,7 +118,7 @@
 #
 ######################################################################################
 - name: Install Docker (Windows)
-  hosts: win_worker
+  hosts: docker:&windows_box
   gather_facts: false
   connection: local
   user: remote

@@ -1,9 +1,18 @@
+cpus: '4'
+ram: '65536'
+disk2_size: '500'
+disk2: '/dev/sdb'
+disk2_part: '/dev/sdb1'
+orchestrator: kubernetes
+
+#
+# the following data structures are specific to VMWare VMs and are used as such by the ansible module vmware_guest 
+#
 networks:
-  - name:  '{{ vm_portgroup }}'
+  - name: '{{ vm_portgroup }}'
     ip:  "{{ ip_addr | ipaddr('address') }}"
     netmask: "{{ ip_addr | ipaddr('netmask') }}"
     gateway: "{{ gateway }}"
-
 #  - name: 'dpgISCSI'
 #    ip:  "{{ iscsi_addr | ipaddr('address') }}"
 #    netmask: "{{ iscsi_addr | ipaddr('netmask') }}"
@@ -16,11 +25,4 @@ disks_specs:
     type: thin
     datastore: "{{ datastores | random }}"
 
-disk2: '/dev/sdb'
-disk2_part: '/dev/sdb1'
-
-cpus: '4'
-ram: '16384'
-disk2_size: '500'
-node_policy: 'clh-bronze'
 
