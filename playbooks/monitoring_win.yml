@@ -14,7 +14,7 @@
 # limitations under the License.
 ###
 ---
-- hosts: logger win_worker
+- hosts: logger windows_box
   gather_facts: false
   connection: local
   user: remote
@@ -94,7 +94,7 @@
           name: SplunkForwarder
           state: started
 
-      when: inventory_hostname in groups.win_worker
+      when: inventory_hostname in groups.windows_box
 
 # end of section for Windows Hosts
 

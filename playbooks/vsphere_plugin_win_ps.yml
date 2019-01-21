@@ -14,7 +14,7 @@
 # limitations under the License.
 ###
 ---
-- hosts: win_worker
+- hosts: windows_box
   gather_facts: false
   connection: local
   user: remote
