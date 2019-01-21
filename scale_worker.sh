@@ -40,4 +40,4 @@ done
 vswitch=${vault_switch:-}
 loadbalancer=${loadbalancer:-"loadbalancer"}
 scope="worker,${loadbalancer}"
-ansible-playbook -i vm_hosts --limit=${scope}  ${vswitch}  site.yml
+ansible-playbook -i hosts --limit=${scope}  ${vswitch}  site.yml

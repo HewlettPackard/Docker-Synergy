@@ -29,10 +29,10 @@ else
 fi
 
 vswitch=${vault_switch:-}
-ansible-playbook -i vm_hosts playbooks/backup_swarm.yml        ${vswitch} $backup_swarm
+ansible-playbook -i hosts playbooks/backup_swarm.yml        ${vswitch} $backup_swarm
 sleep 20
-ansible-playbook -i vm_hosts playbooks/backup_ucp.yml          ${vswitch} $backup_ucp
+ansible-playbook -i hosts playbooks/backup_ucp.yml          ${vswitch} $backup_ucp
 sleep 20
-ansible-playbook -i vm_hosts playbooks/backup_dtr_metadata.yml ${vswitch} $backup_dtr_meta
+ansible-playbook -i hosts playbooks/backup_dtr_metadata.yml ${vswitch} $backup_dtr_meta
 sleep 20
-ansible-playbook -i vm_hosts playbooks/backup_dtr_images.yml   ${vswitch} $backup_dtr_data
+ansible-playbook -i hosts playbooks/backup_dtr_images.yml   ${vswitch} $backup_dtr_data
