@@ -209,6 +209,8 @@
                value: "{{ dns[0] }}"
              - name: AnsibleNIC1.dns2
                value: "{{ dns[1] | default (dns[0]) }}"
+             - name: DataDrive
+               value: "{{ disk2 }}"
 
     - set_fact: server_name="{{ server_hardware.name }}"
       when: touch_profile == true
