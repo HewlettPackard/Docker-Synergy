@@ -1,13 +1,12 @@
 ---
-- hosts: playwithdocker
+- name: Install Play with Docker
+  hosts: playwithdocker
   gather_facts: true
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
 # Install missing PIP package and deps
 

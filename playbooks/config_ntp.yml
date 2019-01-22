@@ -14,15 +14,14 @@
 # limitations under the License.
 ### 
 ---
-- hosts: vms
+- name: Configure NTP on Linux boxes
+  hosts: linux_box
   gather_facts: false
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
 

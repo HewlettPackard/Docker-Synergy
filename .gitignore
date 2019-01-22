@@ -1,3 +1,4 @@
+hosts
 vm_hosts
 vm_hosts.all
 license.lic
@@ -6,4 +7,3 @@ ansible.log
 .vault_pass
 license.lic
 ansible.log
-

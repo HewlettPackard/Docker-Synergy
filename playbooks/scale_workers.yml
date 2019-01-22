@@ -15,12 +15,10 @@
 ###
 ---
 - name: Join Workers (Linux)
-  hosts: worker
+  hosts: worker:&linux_box
   gather_facts: false
 
   vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
     - includes/internal_vars.yml
 
   pre_tasks:
@@ -45,12 +43,8 @@
 #
 ###############################################################
 - name: Join Workers (Windows)
-  hosts: win_worker
+  hosts: worker:&windows_box
   gather_facts: false
-
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
   pre_tasks:
     - include_tasks: includes/find_ucp.yml

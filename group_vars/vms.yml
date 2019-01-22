@@ -1,3 +1,7 @@
+disk1_size: '100'
+disk2: '/dev/sdb'
+disk2_part: '/dev/sdb1'
+
 networks:
   - name:  '{{ vm_portgroup }}'
     ip:  "{{ ip_addr | ipaddr('address') }}"
@@ -8,3 +12,4 @@ disks_specs:
   - size_gb:  '{{ disk1_size }}'
     type: thin
     datastore: "{{ datastores | random }}"
+

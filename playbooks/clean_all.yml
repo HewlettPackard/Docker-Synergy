@@ -14,21 +14,17 @@
 # limitations under the License.
 ### 
 ---
-- hosts: all_vms
-  name: Delete ALl VMs
+- hosts: vms
+  name: Delete VMs
   gather_facts: false
   connection: local
-  user: remote
-  become: true
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
     - name: Power off VMs
+      delegate_to: localhost
       vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -39,11 +35,10 @@
         folder: "{{ datacenter }}/vm{{ folder_name }}"
         name: "{{ inventory_hostname }}"
         state: poweredoff
-      vars:
-        ansible_connection: local
       failed_when: false
 
     - name: Delete VMs
+      delegate_to: localhost
       vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -68,14 +63,9 @@
   gather_facts: false
   name: Cleanup SimpliVity Specific
   connection: local
-  user: remote
-  become: false
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
   - block:
@@ -87,6 +77,7 @@
         - "{{ datastores }}"
 
     - name: Power off Dummy VMs
+      delegate_to: localhost
       vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -96,12 +87,11 @@
         folder: "{{ datacenter }}/vm{{ folder_name }}"
         name: "{{ item }}"
         state: poweredoff
-      vars:
-        ansible_connection: local
       with_items: "{{ dummy_vms }}"
       failed_when: false
 
     - name: Delete  Dummy VMs
+      delegate_to: localhost
       vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -111,7 +101,75 @@
         folder: "{{ datacenter }}/vm{{ folder_name }}"
         name: "{{ item }}"
         state: absent
-      vars:
-        ansible_connection: local
       with_items: "{{ dummy_vms }}"
     when: svt_cleanup is defined and svt_cleanup
+
+#############################################################################xxx
+# 
+# play 3: Cleanup Baremetal Server
+#
+################################################################################
+- name: Decommission Baremetal Server
+  hosts: bms
+  gather_facts: false
+  connection: local
+
+  environment: 
+    - "{{ env }}"
+
+  tasks:
+
+    - debug: msg="{{ inventory_hostname }} {{ ip_addr }} enc:{{ enclosure }} tpl:{{ ov_template }} osdp:{{ ov_osdp }}"
+
+    - name: Gather facts about a Server Profile by name
+      oneview_server_profile_facts:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        name: "{{ inventory_hostname }}"
+      delegate_to: localhost
+
+    - name: Power Off the server hardware
+      when: server_profiles | length > 0
+      oneview_server_hardware:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        state: power_state_set
+        data:
+            name : '{{ enclosure }}, bay {{ server_profiles[0].enclosureBay }}'
+            powerStateData:
+                powerState: "Off"
+                powerControl: "PressAndHold"
+      delegate_to: localhost
+
+    - name: Gather facts about server hardware
+      when: server_profiles | length > 0
+      oneview_server_hardware_facts:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        name: "{{ enclosure }}, bay {{ server_profiles[0].enclosureBay }}"
+      delegate_to: localhost
+
+    - debug: var=server_hardware.powerState
+      when: server_profiles | length > 0
+
+    - name: Delete the Server Profile If it exists
+      when: server_profiles | length > 0
+      oneview_server_profile:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        state: "absent"
+        data:
+          name: "{{ inventory_hostname }}"
+      delegate_to: localhost
+      register: result
+
+    - debug: msg="{{ result.msg }}"
+      when: server_profiles | length > 0

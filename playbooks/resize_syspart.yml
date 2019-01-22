@@ -20,16 +20,13 @@
 #
 #####################################################################################
 - name: Resize System Partition (Linux))
-  hosts: vms
+  hosts: linux_box
   gather_facts: false
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
 
@@ -57,15 +54,11 @@
 #
 #####################################################################################
 - name: Resize System Partition (Windows)
-  hosts: win_worker
+  hosts: windows_box
   gather_facts: false
   connection: local
   user: remote
   become: false
-
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
   tasks:
 
@@ -84,4 +77,3 @@
         }
       register: res
       changed_when: '"changed: true" in res.stdout_lines'
-      when: inventory_hostname in groups.win_worker

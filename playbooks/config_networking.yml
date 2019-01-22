@@ -14,16 +14,13 @@
 # limitations under the License.
 ### 
 ---
-- hosts: vms
+- hosts: linux_box
   gather_facts: false
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
 
@@ -37,8 +34,3 @@
         dest: /etc/hosts
         unsafe_writes: yes
 
-#    - name: Update DNS settings
-#      template:
-#        src: ../templates/resolv.conf.j2
-#        dest: /etc/resolv.conf
-#        unsafe_writes: yes

@@ -15,14 +15,12 @@
 ###
 ---
 - name: Install Splunk Universal Forwarder (Linux)
-  hosts: vms
+  hosts: linux_box
   gather_facts: false
   become_user: root
   become: true
 
   vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
     - ./includes/internal_vars.yml
 
   environment:
@@ -121,7 +119,7 @@
         notify: RestartLinuxSplunkUF
         when: res.stat.exists == true
 
-      when: inventory_hostname in groups.vms
+      when: inventory_hostname in groups.linux_box
       
 # end of section of non docker hosts
 
@@ -143,14 +141,12 @@
 #
 #########################################################################
 - name: Install Splunk Universal Forwarder (Windows) 
-  hosts: logger win_worker
+  hosts: logger:windows_box
   gather_facts: false
   connection: local
   become: false
 
   vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
     - ./includes/internal_vars.yml
 
   environment:
@@ -245,7 +241,7 @@
           name: SplunkForwarder
           state: started
 
-      when: inventory_hostname in groups.win_worker
+      when: inventory_hostname in groups.windows_box
 
 # end of section for Windows Hosts
 

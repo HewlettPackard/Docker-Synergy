@@ -19,8 +19,6 @@
   gather_facts: false
 
   vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
     - includes/internal_vars.yml
 #    - ../group_vars/backups
 

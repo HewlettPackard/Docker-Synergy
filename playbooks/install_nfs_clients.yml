@@ -14,15 +14,13 @@
 # limitations under the License.
 ### 
 ---
-- hosts: docker
+- hosts: docker:&linux_box
   gather_facts: false
   become_user: root
   become: true
 
-  vars_files:
-    - ../group_vars/vars
-
-  environment: "{{ env }}"
+  environment:
+    - "{{ env }}"
 
   tasks:
     - name: Install NFS client
