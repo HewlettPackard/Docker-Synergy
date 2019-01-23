@@ -99,4 +99,5 @@
       when: not vdvs_svc.exists
 
     # Only execute the above plays on VMs, not baremetal nodes
-    when: "(baremetal is defined) and (baremetal == False)"
+    when:
+      - inventory_hostname not in groups.bm_wrk_win
