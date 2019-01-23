@@ -34,8 +34,6 @@ disk2: '/dev/sdb'
 disk2_part: '/dev/sdb1'
 vsphere_plugin_version: '0.21' 
 
-# enable_windows: is obsolete, ignored
-#enable_windows: false
 win_vm_template: 'windows-template-name'
 win_username: 'Administrator'
 windows_vdvs_ps: 'https://raw.githubusercontent.com/vmware/vsphere-storage-for-docker/master/install-vdvs.ps1'
@@ -43,7 +41,14 @@ windows_vdvs_path: 'https://vmware.bintray.com/vDVS/vsphere-storage-for-docker_w
 windows_vdvs_version: '0.21' # was 0.17
 windows_vdvs_directory: 'C:\Users\Administrator\Downloads\'
 windows_winrm_script: 'http://yourlocalwebsercver/ConfigureRemotingForAnsible.ps1'
-#windows_update: true
+windows_update: true
+# Windows server timezone
+# Important that this value matches the timezone used by UCP servers for certificate validation
+windows_tz: 'Pacific Standard Time'
+windows_docker_drive: 'D'
+windows_docker_directory: 'D:\\DockerData'
+windows_docker_volume_label: 'DockerVol'
+
 
 # Networking
 nic_name: 'ens192'
@@ -54,12 +59,12 @@ ntp_servers: ['10.60.1.123','0.us.pool.net.org','1.us.pool.net.org']
 
 # Docker configuration
 #docker_ee_url: is defined in group_vars/vault, should be kept secret
-docker_ee_reponame: stable-17.06
-#docker_ee_version: 'docker-ee-17.06.2.ee.17-3.el7.x86_64'
-docker_ee_version_windows: '17.06'
+docker_ee_reponame: 'stable-18.09'
+docker_ee_version: 'docker-ee-18.09.0-3.el7.x86_64'
+docker_ee_version_windows: '18.09'
 rhel_version: '7'
-dtr_version: '2.5.6'
-ucp_version: '3.0.7'
+dtr_version: '2.6.0'
+ucp_version: '3.1.0'
 
 images_folder: '/docker-images'
 license_file: '/root/license.lic'

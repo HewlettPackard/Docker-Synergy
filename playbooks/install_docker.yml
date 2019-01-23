@@ -14,6 +14,11 @@
 # limitations under the License.
 ### 
 ---
+######################################################################################
+#
+# Play 1: Install Docker on RedHat
+#
+######################################################################################
 - name: Install Docker (Redhat)
   hosts: docker:&linux_box
   gather_facts: false
@@ -111,7 +116,7 @@
 
 ######################################################################################
 #
-# Play2: Install Docker on Windows
+# Play 2: Install Docker on Windows
 #
 ######################################################################################
 - name: Install Docker (Windows)
@@ -121,22 +126,15 @@
   user: remote
   become: false
 
-  environment:
-    - "{{ env }}"
-
   vars:
     proxy_switch: "{% if  env.http_proxy is defined  %}-Proxy http://{{ env.http_proxy  }}{% endif %}"
 
   tasks:
 
   - name: Is Docker running
-    win_shell: |
-      $svc=(get-service -name docker)
-      if ( $svc -ne $null )
-      {
-        $svc.status
-      }
-    register: status
+    win_service:
+      name: docker
+    register: docker_svc
 
   - block: # Docker is not running
     #
@@ -152,6 +150,11 @@
         windows_update: "{{ windows_update | default(true) }}"
 
     - block:
+
+      - name: Start Windows Update Service
+        win_service:
+          name: wuauserv
+          state: restarted
 
       - name: Download and install Windows updates
         win_updates:
@@ -235,13 +238,28 @@
         start_mode: auto
         state: restarted
 
-    - wait_for_connection:
-        delay: 120
-        timeout: 300
-      register: res
+    - name: Wait 2 minutes for Docker service to start
+      pause:
+        minutes: 2
 
-    - debug: var=res
-      when: _debug is defined
+    - name: Stop Docker Service for Storage re-configuration
+      win_service:
+        name: Docker
+        state: stopped
+
+    - name: Install Docker daemon.json File
+      win_template:
+        src: ../templates/windows/daemon.json.j2
+        dest: C:\ProgramData\docker\config\daemon.json
+
+    - name: Re-start Docker Service with new Storage configuration
+      win_service:
+        name: Docker
+        state: started
+
+    - name: Wait 2 minutes for Docker service to start
+      pause:
+        minutes: 2
 
     - name: Install required docker swarm ucp-agent-win image 
       win_shell: |
@@ -267,10 +285,4 @@
       fail:
       when: docker_cmd.rc != 0
 
-    # idempotency not implemented, we don't touch the target if the service was installed
-    when: status.stdout == "" # Docker was installedO
-
-  - block: # Docker was running
-    - debug: msg="Docker Service is installed, not making any change to the system"
-    when: status.stdout_lines != ""
-
+    when: not docker_svc.exists

@@ -1,0 +1,88 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+####################################################################################
+#
+# play 1: Initialize physical disk on Windows
+#
+#         Query the available disks for any un-initialized (RAW) disks,
+#         select the first RAW disk, initialize it, partition it,
+#         format it with NTFS, assign an available drive letter, and
+#         give it the label "DockerVol".
+#
+#####################################################################################
+- name: Initialize Physical Disk (Windows)
+  hosts: bm_wrk_win
+  gather_facts: false
+  connection: local
+  user: remote
+  become: false
+
+  tasks:
+
+    - name: Initialize Disk Device for Docker
+      win_shell: | 
+        $raw_disk = (Get-Disk | Where-Object PartitionStyle -eq 'RAW' | Select-Object -First 1)
+        if ( $raw_disk )
+        {
+           Initialize-Disk -InputObject $raw_disk -PartitionStyle GPT -PassThru | 
+           New-Partition -DriveLetter "{{ windows_docker_drive }}" -UseMaximumSize | 
+           Format-Volume -FileSystem NTFS -NewFileSystemLabel "{{ windows_docker_volume_label }}" -Confirm:$False
+           "changed: true"
+        } else {
+           "changed: false"
+        }
+      register: res
+      changed_when: '"changed: true" in res.stdout_lines'
+      when: 
+        - inventory_hostname in groups.bm_wrk_win
+        - "(baremetal is defined) and (baremetal == True)"
+
+
+####################################################################################
+#
+# play 2: Configure Windows Pagefile
+#
+#         Relocate the Windows pagefile from the Image Streamer thin-volume to the 
+#         SCSI/RAID volume.  Remove any existing pagefiles, enable Automatic 
+#         pagefile management and reboot system to implement new pagefile settings.
+#
+#####################################################################################
+
+    # Currently there is a defect in win_pagefile not returning the list of
+    # configured pagefiles.  Until it is fixed, use the wmic command to query.
+    #- name: List any configured pagefiles
+    #  win_pagefile:
+    #    drive: "{{ windows_docker_drive }}"
+
+    - name: Discover any current pagefiles
+      win_command: wmic pagefile list /format:list
+      register: wmic
+
+    - name: Remove pagefile from C drive and enable AutomaticManagedPagefile
+      win_pagefile:
+        remove_all: yes
+        automatic: yes
+      when: 
+        - '"Name=C:\pagefile.sys" in wmic.stdout_lines'
+        - "(baremetal is defined) and (baremetal == True)"
+
+    - name: Reboot Windows system after pagefile re-configuration
+      win_reboot:
+        post_reboot_delay: 30
+      when: 
+        - '"Name=C:\pagefile.sys" in wmic.stdout_lines'
+        - "(baremetal is defined) and (baremetal == True)"
