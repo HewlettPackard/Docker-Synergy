@@ -31,12 +31,12 @@
       shell:
         cmd: subscription-manager register --org="{{rhn_orgid}}" --activationkey="{{rhn_key}}" 
       when:
-        - rhn_orgid is defined
-        - rhn_key is defined
+        - rhn_orgid is defined and rhn_orgid != ''
+        - rhn_key is defined and rhn_key != ''
 
     - name: Register system using Red Hat Username and Password
       shell:
         cmd: subscription-manager register --username="{{redhat_user}}" --password="{{redhat_pass}}" --auto-attach
       when:
-        - redhat_user is defined
-        - redhat_pass is defined
+        - redhat_user is defined and redhat_user != ''
+        - redhat_pass is defined and redhat_pass != ''

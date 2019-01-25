@@ -16,7 +16,7 @@
 ---
 ####################################################################################
 #
-# play 1: Initialize physical disk on Windows
+# play 1: Initialize data disk on Windows
 #
 #         Query the available disks for any un-initialized (RAW) disks,
 #         select the first RAW disk, initialize it, partition it,
@@ -24,14 +24,33 @@
 #         give it the label "DockerVol".
 #
 #####################################################################################
-- name: Initialize Physical Disk (Windows)
-  hosts: bm_wrk_win
+- name: Initialize Data Disk for Dockers (Windows)
+  hosts: windows_box
   gather_facts: false
   connection: local
   user: remote
   become: false
 
   tasks:
+
+    #
+    # On systems with a CD-ROM drive attached, change
+    # the drive letter to a higher alphabetic value
+    # because we want to standardize on the drive 
+    # letter for the Docker data disk.
+    #
+    - name: Change Drive Letter of CD-ROM Device
+      win_shell: |
+        $cdrom = Get-WmiObject -Class win32_volume -Filter "DriveType = '5'"
+        if ( $cdrom )
+        {
+           Set-WmiInstance -input $cdrom -Arguments @{DriveLetter="S:"}
+           "changed: true"
+        } else {
+           "changed: false"
+        }
+      register: res
+      changed_when: '"changed: true" in res.stdout_lines'
 
     - name: Initialize Disk Device for Docker
       win_shell: | 
@@ -49,6 +68,7 @@
       changed_when: '"changed: true" in res.stdout_lines'
 
 
+
 ####################################################################################
 #
 # play 2: Configure Windows Pagefile
@@ -57,27 +77,34 @@
 #         SCSI/RAID volume.  Remove any existing pagefiles, enable Automatic 
 #         pagefile management and reboot system to implement new pagefile settings.
 #
+#         This only needs to be done on bare-metal Windows worker nodes.
+#
 #####################################################################################
 
-    # Currently there is a defect in win_pagefile not returning the list of
-    # configured pagefiles.  Until it is fixed, use the wmic command to query.
-    #- name: List any configured pagefiles
-    #  win_pagefile:
-    #    drive: "{{ windows_docker_drive }}"
+    - block:
 
-    - name: Discover any current pagefiles
-      win_command: wmic pagefile list /format:list
-      register: wmic
+      # Currently there is a defect in win_pagefile not returning the list of
+      # configured pagefiles.  Until it is fixed, use the wmic command to query.
+      #- name: List any configured pagefiles
+      #  win_pagefile:
+      #    drive: "{{ windows_docker_drive }}"
 
-    - name: Remove pagefile from C drive and enable AutomaticManagedPagefile
-      win_pagefile:
-        remove_all: yes
-        automatic: yes
-      when: 
-        - '"Name=C:\pagefile.sys" in wmic.stdout_lines'
+      - name: Discover any current pagefiles
+        win_command: wmic pagefile list /format:list
+        register: wmic
+  
+      - name: Remove pagefile from C drive and enable AutomaticManagedPagefile
+        win_pagefile:
+          remove_all: yes
+          automatic: yes
+        when: 
+          - '"Name=C:\pagefile.sys" in wmic.stdout_lines'
 
-    - name: Reboot Windows system after pagefile re-configuration
-      win_reboot:
-        post_reboot_delay: 30
-      when: 
-        - '"Name=C:\pagefile.sys" in wmic.stdout_lines'
+      - name: Reboot Windows system after pagefile re-configuration
+        win_reboot:
+          post_reboot_delay: 30
+        when: 
+          - '"Name=C:\pagefile.sys" in wmic.stdout_lines'
+
+      when:
+        - inventory_hostname in groups.bm_wrk_win

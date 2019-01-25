@@ -242,6 +242,10 @@
       pause:
         minutes: 2
 
+
+    #
+    # Reconfigure the Docker daemon to use the secondary storage device
+    #
     - name: Stop Docker Service for Storage re-configuration
       win_service:
         name: Docker
