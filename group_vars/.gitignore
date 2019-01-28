@@ -1,2 +1,3 @@
-vars
-vault
+backups
+all/vars
+all/vault
