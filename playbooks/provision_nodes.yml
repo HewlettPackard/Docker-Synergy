@@ -124,11 +124,10 @@
 
   tasks:
 
-    - debug: msg="{{ inventory_hostname }} {{ ip_addr }} enc:{{ enclosure }} tpl:{{ ov_template }} osdp:{{ ov_osdp }}"
+    - debug: msg="{{ inventory_hostname }} {{ ip_addr }} enc:{{ enclosure }} tpl:{{ ov_template }}"
 
     - name: Gather facts about the Server Profile Template to retrieve connection information
       oneview_server_profile_template_facts:
-#        config: "{{ config }}"
         hostname: "{{ oneview_config_hostname }}"
         username: "{{ oneview_config_username }}"
         password: "{{ oneview_config_password }}"
@@ -136,12 +135,32 @@
         name: "{{ ov_template }}"
       delegate_to: localhost
 
-    - name: Find the connection by management network name
-      set_fact: connection={{ server_profile_templates.0.connectionSettings.connections | selectattr('name', 'equalto', ov_ansible_connection_name) | first }}
+    - fail:
+        msg: "Cannot find Server Profile template {{ ov_template }}. Aborting... " 
+      when: server_profile_templates | length < 1
+
+    - fail:
+        msg: "Server profile Template {{ ov_template }} does not specify an OS Deployment Plan. Aborting..." 
+      when: server_profile_templates[0].osDeploymentSettings.osDeploymentPlanUri is not defined
+
+    - name: Find the connection that connects to the ansible network by its name
+      set_fact: connections={{ server_profile_templates.0.connectionSettings.connections | selectattr('name', 'equalto', ov_ansible_connection_name) | list }}
+    - fail:
+        msg: "The connection {{ ov_ansible_connection_name }} could not be found in template {{ ov_template }}" 
+      when: connections | length < 1
+    - set_fact:
+        connection: "{{ connections | first }}" 
+
+    - name: Find the redundant connection that connects to the ansible network by its name
+      set_fact: connections={{ server_profile_templates.0.connectionSettings.connections | selectattr('name', 'equalto', ov_ansible_redundant_connection_name) | list }}
+    - fail:
+        msg: "The connection {{ ov_ansible_redundant_connection_name }} could not be found in template {{ ov_template }}" 
+      when: connections | length < 1
+    - set_fact:
+        connection2: "{{ connections | first }}" 
 
     - name: Gather facts about a Server Profile by name
       oneview_server_profile_facts:
-#        config: "{{ config }}"
         hostname: "{{ oneview_config_hostname }}"
         username: "{{ oneview_config_username }}"
         password: "{{ oneview_config_password }}"
@@ -151,7 +170,6 @@
 
     - name: Gather facts about server hardware
       oneview_server_hardware_facts:
-#        config: "{{ config }}"
         hostname: "{{ oneview_config_hostname }}"
         username: "{{ oneview_config_username }}"
         password: "{{ oneview_config_password }}"
@@ -168,11 +186,10 @@
       when: server_hardwares is defined and server_hardwares | length > 0
     - debug: var=touch_profile
 
-    - name : "Create server profile with deployment plan {{ ov_osdp }}"
+    - name : "Provision Server" 
       delegate_to: localhost
       when: touch_profile == true
       oneview_server_profile:
-#        config: "{{ config }}"
         hostname: "{{ oneview_config_hostname }}"
         username: "{{ oneview_config_username }}"
         password: "{{ oneview_config_password }}"
@@ -183,34 +200,34 @@
           serverProfileTemplateName: "{{ ov_template }}"
           serverHardwareName: "{% if bay is defined %}{{ enclosure }}, bay {{ bay }}{% endif %}"
           osDeploymentSettings:
-            osDeploymentPlanName: "{{ ov_osdp }}"
+            osDeploymentPlanUri: "{{ server_profile_templates[0].osDeploymentSettings.osDeploymentPlanUri }}"
             osCustomAttributes:
-             - name: HostName
-               value: '{{ inventory_hostname }}'
-             - name: AnsibleNIC1.vlanid
+             - name: Team0.vlanid
                value: '0'
-             - name: AnsibleNIC1.dhcp
+             - name: Team0.dhcp
                value: false
-             - name: AnsibleNIC1.networkuri
-               value: '{{ connection.networkUri }}'
-             - name: AnsibleNIC1.connectionid
+             - name: Team0.connectionid
                value: '{{ connection.id }}'
-             - name: AnsibleNIC1.constraint
+             - name: Team0.networkuri
+               value: '{{ connection.networkUri }}'
+             - name: Team0.secondaryconnectionid
+               value:  '{{ connection2.id }}'
+             - name: Team0.secondarynetworkuri
+               value: '{{ connection2.networkUri }}'
+             - name: Team0.constraint
                value: 'userspecified'
-             - name: AnsibleNIC1.ipaddress
+             - name: Team0.ipaddress1
                value: "{{ ip_addr | ipaddr('address') }}"
-             - name: AnsibleNIC1.netmask
+             - name: Team0.netmask
                value: "{{ ip_addr | ipaddr('netmask') }}"
-             - name: AnsibleNIC1.domain
+             - name: Team0.domain
                value: '{{ domain_name }}'
-             - name: AnsibleNIC1.gateway
+             - name: Team0.gateway
                value: "{{ gateway }}"
-             - name: AnsibleNIC1.dns1
+             - name: Team0.dns1
                value: "{{ dns[0] }}"
-             - name: AnsibleNIC1.dns2
+             - name: Team0.dns2
                value: "{{ dns[1] | default (dns[0]) }}"
-             - name: DataDrive
-               value: "{{ disk2 }}"
 
     - set_fact: server_name="{{ server_hardware.name }}"
       when: touch_profile == true
@@ -219,7 +236,6 @@
 
     - name: Power On the server hardware
       oneview_server_hardware:
-#        config: "{{ config }}"
         hostname: "{{ oneview_config_hostname }}"
         username: "{{ oneview_config_username }}"
         password: "{{ oneview_config_password }}"

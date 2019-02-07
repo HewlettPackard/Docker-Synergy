@@ -119,7 +119,7 @@
 
   tasks:
 
-    - debug: msg="{{ inventory_hostname }} {{ ip_addr }} enc:{{ enclosure }} tpl:{{ ov_template }} osdp:{{ ov_osdp }}"
+    - debug: msg="{{ inventory_hostname }} {{ ip_addr }} enc:{{ enclosure }} tpl:{{ ov_template }}"
 
     - name: Gather facts about a Server Profile by name
       oneview_server_profile_facts:

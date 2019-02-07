@@ -1,4 +1,4 @@
-oneview_config_hostname: synergy1.am2.cloudra.local
+oneview_config_hostname: synergy.cloudra.local
 oneview_config_username: Administrator
 #oneview_config_password: "Password of the oneview account should be specified in group_vars/vault"
 oneview_config_api_version: 600

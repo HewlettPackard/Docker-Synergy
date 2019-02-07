@@ -14,7 +14,8 @@
 # limitations under the License.
 ### 
 ---
-- hosts: docker:&linux_box
+- name: Post Docker installation steps for Linux
+  hosts: docker:&linux_box
   gather_facts: false
   become_user: root
   become: true
@@ -37,14 +38,6 @@
 
     - meta: flush_handlers
 
-    - name: Check if vsphere plugin is installed
-      shell: docker plugin ls | grep vsphere | wc -l
-      register: vsphere_installed
-
-    - name: Install vsphere plugin
-      command: docker plugin install --grant-all-permissions --alias vsphere vmware/vsphere-storage-for-docker:{{ vsphere_plugin_version }}
-      when: vsphere_installed.stdout == "0"
-
   handlers:
     - name: Restart Docker
       systemd:
@@ -54,10 +47,11 @@
 
 #####################################################################
 #
-# Play 2: Install vSphere plugin on Windows workers
+# Play 2: Post Docker installation steps for Windows
 #
 #####################################################################
-- hosts: docker:&windows_box
+- name: Post Docker installation steps for Windows
+  hosts: docker:&windows_box
   gather_facts: false
   connection: local
   user: remote
@@ -65,39 +59,5 @@
 
   tasks:
 
-  - block:
+    - debug: msg="Docker post install Steps in Windows" 
 
-    - name: Is vSphere Plugin Installed
-      win_service:
-        name: vdvs
-      register: vdvs_svc
-
-    - block:
-
-      - name: Download vSphere Docker Volume Service Installer
-        win_get_url:
-          url: "{{ windows_vdvs_ps }}"
-          proxy_url: "{{ proxy_url }}"
-          dest: "{{ windows_vdvs_directory }}install-vdvs.ps1"
-        vars:
-          proxy_url: "{% if env.http_proxy is defined %}http://{{ env.http_proxy }}{% endif %}"
-
-      - name: Install Windows vSphere Docker Volume Service
-        win_shell: |
-          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-          .\install-vdvs.ps1 {{ windows_vdvs_path }}_{{ windows_vdvs_version }}.zip
-        args:
-          chdir: "{{ windows_vdvs_directory }}"
-
-      - name: Configure Windows vSphere Docker Volume Service
-        win_service:
-          name: vdvs
-          start_mode: auto
-          state: started
-
-      # Only install the plugin if it is not already installed
-      when: not vdvs_svc.exists
-
-    # Only execute the above plays on VMs, not baremetal nodes
-    when:
-      - inventory_hostname not in groups.bm_wrk_win

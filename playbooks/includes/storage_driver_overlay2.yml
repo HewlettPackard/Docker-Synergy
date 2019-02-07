@@ -14,9 +14,12 @@
 # limitations under the License.
 ### 
 ---
-    - stat:
+    - name: Verify data drives special file
+      stat:
         path: "{{ item }}"
+        follow: yes
       register: res
+      changed_when: false
       with_items:
         - "{{ disk2 }}"
 
@@ -31,7 +34,13 @@
     - name: Enable FCOE Stack if needed
       when: fcoe is defined
       yum:
-        name: 'fcoe-utils,lldpad,NetworkManager-glib'
+        name: 'fcoe-utils,lldpad,NetworkManager-glib,device-mapper-multipath'
+        state: 'latest'
+        update_cache: yes
+
+    - name: Enable multipath
+      yum:
+        name: 'device-mapper-multipath'
         state: 'latest'
         update_cache: yes
 
@@ -58,7 +67,14 @@
       with_items:
         - "{{ fcoe_devices }}"
       
-    - name: Start fcoe and llpad services
+    - name: Copy multipath configuration file
+      when: fcoe is defined
+      template:
+        dest: /etc/multipath.conf
+        src: ../templates/multipath.conf.j2
+      register: res
+
+    - name: Start fcoe, llpad and multipathd services
       when: fcoe is defined
       systemd:
         name: "{{ item }}"
@@ -66,6 +82,14 @@
         state: started
       with_items:
         - fcoe
+
+    - name: Start multipathd service
+      systemd:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      with_items:
+        - multipathd
 
     - name: Wait until FCOE device shows up
       when: fcoe is defined
@@ -87,6 +111,7 @@
 
     - set_fact:
         partPresent: "{{ DiskInfo.partitions[0] is defined }}"
+
 
     - name: Create partition on second disk
       parted:
@@ -112,7 +137,7 @@
         opts: --wipesignatures y
         vg: docker
         size: 100%VG
-#      when: partPresent == false
+      when: partPresent == false
 
     - name: Create XFS partition
       filesystem:
@@ -132,6 +157,6 @@
       mount:
         src: /dev/docker/var_lib_docker
         fstype: xfs
+        opts: "{% if fcoe is defined %}_netdev{% else %}defaults{% endif %}" 
         path: /var/lib/docker
         state: mounted
-

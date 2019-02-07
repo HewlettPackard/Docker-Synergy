@@ -12,6 +12,7 @@
 - import_playbook: playbooks/install_docker.yml
 - import_playbook: playbooks/install_rsyslog.yml
 - import_playbook: playbooks/docker_post_config.yml
+- import_playbook: playbooks/persistent_storage.yml
 - import_playbook: playbooks/install_nfs_server.yml
 - import_playbook: playbooks/install_nfs_clients.yml
 - import_playbook: playbooks/create_main_ucp.yml
