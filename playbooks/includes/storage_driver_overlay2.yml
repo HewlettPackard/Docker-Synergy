@@ -14,6 +14,100 @@
 # limitations under the License.
 ### 
 ---
+    - name: Verify data drives special file
+      stat:
+        path: "{{ item }}"
+        follow: yes
+      register: res
+      changed_when: false
+      with_items:
+        - "{{ disk2 }}"
+
+    - name: "Cleanup files under /dev"
+      when: fcoe is defined and item.stat.exists == true and item.stat.isblk != true
+      file:
+        path: "{{ item.item }}"
+        state: absent
+      with_items:
+        - "{{ res.results }}"
+
+    - name: Enable FCOE Stack if needed
+      when: fcoe is defined
+      yum:
+        name: "{{ packages }}"
+        state: 'latest'
+        update_cache: yes
+      vars:
+        packages:
+          - fcoe-utils
+          - lldpad
+          - NetworkManager-glib
+          - device-mapper-multipath
+
+    - name: Enable multipath
+      yum:
+        name: 'device-mapper-multipath'
+        state: 'latest'
+        update_cache: yes
+
+    - name: Enable FCOE Device
+      when: fcoe is defined
+      template:
+        src: ../templates/fcoe-cfg-ethx.j2
+        dest: /etc/fcoe/cfg-{{ item }}
+      with_items:
+        - "{{ fcoe_devices }}"
+
+    - name: Start DCDB daemon
+      when: fcoe is defined
+      systemd:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      with_items:
+        - lldpad
+
+    - name: Bring FCOE devices Up
+      when: fcoe is defined
+      shell: ip link  set dev "{{ item }}" up
+      with_items:
+        - "{{ fcoe_devices }}"
+      
+    - name: Copy multipath configuration file
+      when: fcoe is defined
+      template:
+        dest: /etc/multipath.conf
+        src: ../templates/multipath.conf.j2
+      register: res
+
+    - name: Start fcoe, llpad and multipathd services
+      when: fcoe is defined
+      systemd:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      with_items:
+        - fcoe
+
+    - name: Start multipathd service
+      systemd:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      with_items:
+        - multipathd
+
+    - name: Wait until FCOE device shows up
+      when: fcoe is defined
+      stat: 
+        path: "{{ item }}"
+      register: res
+      with_items:
+        - "{{ disk2 }}"
+      until: res.stat.exists == true
+      delay: 2
+      retries:  5
+
     - name: Check for partitions on disk
       parted:
         state: info
@@ -23,6 +117,7 @@
 
     - set_fact:
         partPresent: "{{ DiskInfo.partitions[0] is defined }}"
+
 
     - name: Create partition on second disk
       parted:
@@ -48,7 +143,7 @@
         opts: --wipesignatures y
         vg: docker
         size: 100%VG
-#      when: partPresent == false
+      when: partPresent == false
 
     - name: Create XFS partition
       filesystem:
@@ -68,6 +163,6 @@
       mount:
         src: /dev/docker/var_lib_docker
         fstype: xfs
+        opts: "{% if fcoe is defined %}_netdev{% else %}defaults{% endif %}" 
         path: /var/lib/docker
         state: mounted
-

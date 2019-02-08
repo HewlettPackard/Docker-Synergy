@@ -1,7 +1,25 @@
-#ov_template: 'Linux 3par SF V1.0.1'
-ov_template: 'Linux Worker Node (single-frame) v1.0.9' # Name of the OneView Server Profile Template to use for worker nodes
-ov_osdp: 'RedHat760_singleframe_v1.0.9'                # Name of the OS Deployment Plan, we should probably be able to figure it out
-ov_ansible_connection_name: 'ansible'                  # Name of the connection in the Server Profile that connects to the ansible network
+ov_template: 'RedHat760_fcoe_v1.0.2'               # Name of the OneView Server Profile Template to use for worker nodes
+ov_ansible_connection_name: 'ansibleA'             # Name of the 1st connection in the Server Profile that connects to the ansible network
+ov_ansible_redundant_connection_name: ansibleB     # Name of the 2nd connection in the Server Profile that connects to the ansible network
 
-disk2: '/dev/sda' 
-disk2_part: '/dev/sda1'
+disk2: '/dev/mapper/mpatha' 
+disk2_part: '/dev/mapper/mpatha1'
+fcoe_devices: ['ens3f2','ens3f3']
+
+
+#
+# Use the following settings when the server profile connections are configured as indicated below
+#
+#    connection 1: deployment network A
+#    connection 2: deployment network B
+#    connection 3: FC1
+#    connection 4: FC2
+#    connection 5: ansibleA
+#    connection 6: ansibleB
+#
+#ov_template: 'RedHat760_v1.0.2'                    # Name of the OneView Server Profile Template to use for worker nodes
+#ov_ansible_connection_name: 'ansibleA'             # Name of the 1st connection in the Server Profile that connects to the ansible network
+#ov_ansible_redundant_connection_name: ansibleB     # Name of the 2nd connection in the Server Profile that connects to the ansible network
+#disk2: '/dev/mapper/mpatha' 
+#disk2_part: '/dev/mapper/mpatha1'
+#fcoe_devices: ['ens3f2','ens3f3']
