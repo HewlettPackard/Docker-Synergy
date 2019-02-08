@@ -34,9 +34,15 @@
     - name: Enable FCOE Stack if needed
       when: fcoe is defined
       yum:
-        name: 'fcoe-utils,lldpad,NetworkManager-glib,device-mapper-multipath'
+        name: "{{ packages }}"
         state: 'latest'
         update_cache: yes
+      vars:
+        packages:
+          - fcoe-utils
+          - lldpad
+          - NetworkManager-glib
+          - device-mapper-multipath
 
     - name: Enable multipath
       yum:
