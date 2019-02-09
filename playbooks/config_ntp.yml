@@ -56,7 +56,7 @@
 #
 #####################################################################################
 - name: Configure Network Time on Windows servers
-  hosts: windows_box:&bms
+  hosts: windows_box
   gather_facts: false
   connection: local
   user: remote
