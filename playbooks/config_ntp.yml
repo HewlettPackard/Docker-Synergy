@@ -56,7 +56,7 @@
 #
 #####################################################################################
 - name: Configure Network Time on Windows servers
-  hosts: windows_box
+  hosts: windows_box:&bms
   gather_facts: false
   connection: local
   user: remote
@@ -88,7 +88,7 @@
         state: started
 
     - name: Configure Windows NTP Peers
-      win_shell: w32tm /config /syncfromflags:manual /manualpeerlist:"{{ windows_ntp_servers }}"
+      win_shell: w32tm /config /syncfromflags:manual /manualpeerlist:"{{ ntp_servers | join(' ') }}"
 
     - name: Restart Windows Time Service
       win_service:

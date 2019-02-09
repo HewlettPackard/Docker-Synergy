@@ -45,7 +45,6 @@ windows_update: true
 # Windows server timezone
 # Important that this value matches the timezone used by UCP servers for certificate validation
 windows_tz: 'Pacific Standard Time'
-windows_ntp_servers: "10.60.1.123 0.us.pool.net.org 1.us.pool.net.org"
 windows_docker_drive: 'D'
 windows_docker_directory: 'D:\\DockerData'
 windows_docker_volume_label: 'DockerVol'
@@ -182,3 +181,10 @@ loadbalancers:
     public_fqdn: hpe-wrk.cloudra.local
     virtual_router_id: 53
 
+#
+# OneView/Synergy Composer Variables
+#
+oneview_config_hostname: synergy.cloudra.local
+oneview_config_username: Administrator
+oneview_config_api_version: 600
+oneview_config_image_streamer_ip: 10.60.50.21
