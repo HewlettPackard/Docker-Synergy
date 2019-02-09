@@ -45,6 +45,7 @@ windows_update: true
 # Windows server timezone
 # Important that this value matches the timezone used by UCP servers for certificate validation
 windows_tz: 'Pacific Standard Time'
+windows_ntp_servers: "10.60.1.123 0.us.pool.net.org 1.us.pool.net.org"
 windows_docker_drive: 'D'
 windows_docker_directory: 'D:\\DockerData'
 windows_docker_volume_label: 'DockerVol'

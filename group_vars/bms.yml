@@ -1,0 +1,5 @@
+oneview_config_hostname: synergy.cloudra.local
+oneview_config_username: Administrator
+#oneview_config_password: "Password of the oneview account should be specified in group_vars/vault"
+oneview_config_api_version: 600
+oneview_config_image_streamer_ip: 10.60.50.21

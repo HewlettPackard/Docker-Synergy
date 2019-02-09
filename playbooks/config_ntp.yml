@@ -56,7 +56,7 @@
 #
 #####################################################################################
 - name: Configure Network Time on Windows servers
-  hosts: bm_wrk_win
+  hosts: windows_box
   gather_facts: false
   connection: local
   user: remote
@@ -88,10 +88,17 @@
         state: started
 
     - name: Configure Windows NTP Peers
-      win_shell: w32tm /config /manualpeerlist:"time.windows.com" /reliable:no /update
+      win_shell: w32tm /config /syncfromflags:manual /manualpeerlist:"{{ windows_ntp_servers }}"
 
     - name: Restart Windows Time Service
       win_service:
         name: w32time
         state: restarted
         start_mode: auto
+
+    - name: Update Windows Time Configuration
+      win_shell: w32tm /config /update
+
+    - name: Force re-sync Windows Time
+      win_shell: w32tm /resync /rediscover
+
