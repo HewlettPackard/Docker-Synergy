@@ -34,22 +34,6 @@ disk2: '/dev/sdb'
 disk2_part: '/dev/sdb1'
 vsphere_plugin_version: '0.21' 
 
-win_vm_template: 'windows-template-name'
-win_username: 'Administrator'
-windows_vdvs_ps: 'https://raw.githubusercontent.com/vmware/vsphere-storage-for-docker/master/install-vdvs.ps1'
-windows_vdvs_path: 'https://vmware.bintray.com/vDVS/vsphere-storage-for-docker_windows'
-windows_vdvs_version: '0.21' # was 0.17
-windows_vdvs_directory: 'C:\Users\Administrator\Downloads\'
-windows_winrm_script: 'http://yourlocalwebsercver/ConfigureRemotingForAnsible.ps1'
-windows_update: true
-# Windows server timezone
-# Important that this value matches the timezone used by UCP servers for certificate validation
-windows_tz: 'Pacific Standard Time'
-windows_docker_drive: 'D'
-windows_docker_directory: 'D:\\DockerData'
-windows_docker_volume_label: 'DockerVol'
-
-
 # Networking
 nic_name: 'ens192'
 gateway: '10.60.0.1'
@@ -181,3 +165,10 @@ loadbalancers:
     public_fqdn: hpe-wrk.cloudra.local
     virtual_router_id: 53
 
+#
+# OneView/Synergy Composer Variables
+#
+oneview_config_hostname: synergy.cloudra.local
+oneview_config_username: Administrator
+oneview_config_api_version: 600
+oneview_config_image_streamer_ip: 10.60.50.21

@@ -1,1 +1,23 @@
-toto: 'windows_box'
+ansible_user: '{{ win_username }}'
+ansible_password: '{{ win_password }}'
+ansible_port: 5986
+ansible_connection: winrm
+ansible_winrm_server_cert_validation: ignore
+ansible_winrm_operation_timeout_sec: 250
+ansible_winrm_read_timeout_sec: 300
+
+win_username: 'Administrator'
+windows_winrm_script: 'https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'
+windows_update: true
+windows_docker_drive: 'D'
+windows_docker_directory: 'D:\\DockerData'
+windows_docker_volume_label: 'DockerVol'
+
+#
+# Timezone value used by Ansible win_timezone module requires string value
+#
+# This is different from the windows_timezone variable used by the Ansible vmware_guest module
+# Important that this value matches the timezone used by UCP servers for certificate validation
+# https://msdn.microsoft.com/en-us/library/ms912391.aspx
+#
+windows_tz: 'Pacific Standard Time'

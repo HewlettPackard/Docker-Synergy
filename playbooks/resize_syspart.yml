@@ -54,7 +54,7 @@
 #
 #####################################################################################
 - name: Resize System Partition (Windows)
-  hosts: windows_box
+  hosts: vm_wrk_win
   gather_facts: false
   connection: local
   user: remote

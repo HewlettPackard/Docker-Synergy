@@ -1,19 +1,10 @@
-ansible_user: '{{ win_username }}'
-ansible_password: '{{ win_password }}'
-ansible_port: 5986
-ansible_connection: winrm
-ansible_winrm_server_cert_validation: ignore
-ansible_winrm_operation_timeout_sec: 250
-ansible_winrm_read_timeout_sec: 300
-windows_timezone: 15
-
 cpus: '4'
 ram: '65536'
 disk1_size: '100'
 disk2: 'placeholder'
 disk2_size: '500'
 disk2_part: 'placeholder'
-node_policy: 'clh-bronze'
+node_policy: 'dfo-bronze'
 
 networks:
   - name: '{{ vm_portgroup }}'
@@ -32,3 +23,18 @@ disks_specs:
   - size_gb: '{{ disk2_size }}'
     type: thin
     datastore: "{{ datastores | random }}"
+
+win_vm_template: 'dfo-windows-template'
+windows_vdvs_ps: 'https://raw.githubusercontent.com/vmware/vsphere-storage-for-docker/master/install-vdvs.ps1'
+windows_vdvs_path: 'https://vmware.bintray.com/vDVS/vsphere-storage-for-docker_windows'
+windows_vdvs_version: '0.21'
+windows_vdvs_directory: 'C:\Users\Administrator\Downloads\'
+
+#
+# Timezone value used by Ansible vmware_guest module requires numeric value
+#
+# This is different from the windows_tz variable used by the Ansible win_timezone module
+# Important that this value matches the timezone used by UCP servers for certificate validation
+# https://msdn.microsoft.com/en-us/library/ms912391.aspx
+#
+windows_timezone: 15
