@@ -23,3 +23,18 @@ disks_specs:
   - size_gb: '{{ disk2_size }}'
     type: thin
     datastore: "{{ datastores | random }}"
+
+win_vm_template: 'dfo-windows-template'
+windows_vdvs_ps: 'https://raw.githubusercontent.com/vmware/vsphere-storage-for-docker/master/install-vdvs.ps1'
+windows_vdvs_path: 'https://vmware.bintray.com/vDVS/vsphere-storage-for-docker_windows'
+windows_vdvs_version: '0.21'
+windows_vdvs_directory: 'C:\Users\Administrator\Downloads\'
+
+#
+# Timezone value used by Ansible vmware_guest module requires numeric value
+#
+# This is different from the windows_tz variable used by the Ansible win_timezone module
+# Important that this value matches the timezone used by UCP servers for certificate validation
+# https://msdn.microsoft.com/en-us/library/ms912391.aspx
+#
+windows_timezone: 15
