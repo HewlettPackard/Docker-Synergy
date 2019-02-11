@@ -1,3 +1,2 @@
-ov_osdp: 'WindowsServer2016_SingleFrame_v1.0.2'           # Name of the OneView Server Profile Template to use for worker nodes
-ov_template: 'Windows Worker Node (single-frame) v1.0.2'  # Name of the OS Deployment Plan, we should probably be able to figure it out
+ov_template: 'Windows Worker Node v1.0.3'                 # Name of the OS Deployment Plan, we should probably be able to figure it out
 ov_ansible_connection_name: 'Ansible vlan60'              # Name of the connection in the Server Profile that connects to the ansible network
