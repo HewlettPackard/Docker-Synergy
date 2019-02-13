@@ -4,8 +4,8 @@ ov_ansible_redundant_connection_name: ansibleB     # Name of the 2nd connection 
 
 disk2: '/dev/mapper/mpatha' 
 disk2_part: '/dev/mapper/mpatha1'
-fcoe_devices: ['ens3f2','ens3f3']
-
+fcoe_devices: ['ens3f2','ens3f3']                  # only relevant of FCOE is selected, could be computed with the OneView api
+iscsi_devices: ['ens3f6','ens3f7']                 # only relevant if 3par iscsi is selected, could be computed with the OneView API
 
 #
 # Use the following settings when the server profile connections are configured as indicated below
@@ -16,6 +16,8 @@ fcoe_devices: ['ens3f2','ens3f3']
 #    connection 4: FC2
 #    connection 5: ansibleA
 #    connection 6: ansibleB
+#    connection 7: iscsiA
+#    connection 8: iscsiB 
 #
 #ov_template: 'RedHat760_v1.0.2'                    # Name of the OneView Server Profile Template to use for worker nodes
 #ov_ansible_connection_name: 'ansibleA'             # Name of the 1st connection in the Server Profile that connects to the ansible network
@@ -23,3 +25,4 @@ fcoe_devices: ['ens3f2','ens3f3']
 #disk2: '/dev/mapper/mpatha' 
 #disk2_part: '/dev/mapper/mpatha1'
 #fcoe_devices: ['ens3f2','ens3f3']
+#iscsi_devices: ['ens3f6','ens3f7']                 # only relevant if 3par iscsi is selected, could be computed with the OneView API

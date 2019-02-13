@@ -13,9 +13,9 @@ networks:
     ip:  "{{ ip_addr | ipaddr('address') }}"
     netmask: "{{ ip_addr | ipaddr('netmask') }}"
     gateway: "{{ gateway }}"
-#  - name: 'dpgISCSI'
-#    ip:  "{{ iscsi_addr | ipaddr('address') }}"
-#    netmask: "{{ iscsi_addr | ipaddr('netmask') }}"
+  - name: 'dpgiSCSI'
+    ip:  "{{ iscsi_addr | ipaddr('address') }}"
+    netmask: "{{ iscsi_addr | ipaddr('netmask') }}"
 
 disks_specs:
   - size_gb:  '{{ disk1_size }}'
