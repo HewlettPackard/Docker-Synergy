@@ -62,7 +62,7 @@
 
 #######################################################################
 #
-# Play 2: Deploy Windows VM workers
+# Play 2: Deploy Windows VM Worker Nodes
 #
 #######################################################################
 - name: Deploy Windows VMs
@@ -301,15 +301,15 @@
         msg: "The connection {{ ov_ansible_connection_name }} could not be found in template {{ ov_template }}"
       when: connections | length < 1
     - set_fact:
-        connection: "{{ connections | first }}"
+        connection1: "{{ connections | first }}"
 
-#    - name: Find the redundant connection that connects to the ansible network by its name
-#      set_fact: connections={{ server_profile_templates.0.connectionSettings.connections | selectattr('name', 'equalto', ov_ansible_redundant_connection_name) | list }}
-#    - fail:
-#        msg: "The connection {{ ov_ansible_redundant_connection_name }} could not be found in template {{ ov_template }}"
-#      when: connections | length < 1
-#    - set_fact:
-#        connection2: "{{ connections | first }}"
+    - name: Find the redundant connection that connects to the ansible network by its name
+      set_fact: connections={{ server_profile_templates.0.connectionSettings.connections | selectattr('name', 'equalto', ov_ansible_redundant_connection_name) | list }}
+    - fail:
+        msg: "The connection {{ ov_ansible_redundant_connection_name }} could not be found in template {{ ov_template }}"
+      when: connections | length < 1
+    - set_fact:
+        connection2: "{{ connections | first }}"
 
     - name: Gather facts about a Server Profile by name
       oneview_server_profile_facts:
@@ -355,27 +355,35 @@
             osDeploymentPlanUri: "{{ server_profile_templates[0].osDeploymentSettings.osDeploymentPlanUri }}"
             osCustomAttributes:
              - name: Hostname
-               value: '{{ inventory_hostname }}'
+               value: "{{ inventory_hostname }}"
              - name: WindowsProductKey
-               value: '{{ windows_product_key }}'
-             - name: ManagementNIC.connectionid
-               value: '{{ connection.id }}'
-             - name: ManagementNIC.networkuri
-               value: '{{ connection.networkUri }}'
-             - name: ManagementNIC.ipaddress
+               value: "{{ windows_product_key }}"
+             - name: ManagementNIC1.connectionid
+               value: "{{ connection1.id }}"
+             - name: ManagementNIC1.networkuri
+               value: "{{ connection1.networkUri }}"
+             - name: ManagementNIC1.ipaddress
                value: "{{ ip_addr | ipaddr('address') }}"
-             - name: ManagementNIC.dhcp
-               value: "{{ SPT_osCustomAttributes['ManagementNIC.dhcp'] }}"
-             - name: ManagementNIC.constraint
-               value: "{{ SPT_osCustomAttributes['ManagementNIC.constraint'] }}"
-             - name: ManagementNIC.netmask
-               value: "{{ SPT_osCustomAttributes['ManagementNIC.netmask'] }}"
-             - name: ManagementNIC.gateway
-               value: "{{ SPT_osCustomAttributes['ManagementNIC.gateway'] }}"
-             - name: ManagementNIC.dns1
-               value: "{{ SPT_osCustomAttributes['ManagementNIC.dns1'] }}"
-             - name: ManagementNIC.dns2
-               value: "{{ SPT_osCustomAttributes['ManagementNIC.dns2'] | default(SPT_osCustomAttributes['ManagementNIC.dns1']) }}"
+             - name: ManagementNIC1.dhcp
+               value: "{{ SPT_osCustomAttributes['ManagementNIC1.dhcp'] }}"
+             - name: ManagementNIC1.constraint
+               value: "{{ SPT_osCustomAttributes['ManagementNIC1.constraint'] }}"
+             - name: ManagementNIC1.netmask
+               value: "{{ SPT_osCustomAttributes['ManagementNIC1.netmask'] }}"
+             - name: ManagementNIC1.gateway
+               value: "{{ SPT_osCustomAttributes['ManagementNIC1.gateway'] }}"
+             - name: ManagementNIC1.dns1
+               value: "{{ SPT_osCustomAttributes['ManagementNIC1.dns1'] }}"
+             - name: ManagementNIC1.dns2
+               value: "{{ SPT_osCustomAttributes['ManagementNIC1.dns2'] | default(SPT_osCustomAttributes['ManagementNIC1.dns1']) }}"
+             - name: ManagementNIC2.connectionid
+               value: "{{ connection2.id }}"
+             - name: ManagementNIC2.networkuri
+               value: "{{ connection2.networkUri }}"
+             - name: ManagementNIC2.dhcp
+               value: "{{ SPT_osCustomAttributes['ManagementNIC2.dhcp'] }}"
+             - name: ManagementNIC2.constraint
+               value: "{{ SPT_osCustomAttributes['ManagementNIC2.constraint'] }}"
     - set_fact: server_name="{{ server_hardware.name }}"
       when: touch_profile == true
     - set_fact: server_name="{{ server_hardwares[0].name }}"

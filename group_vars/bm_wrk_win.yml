@@ -1,2 +1,3 @@
-ov_template: 'Windows Worker Node v1.0.3'                 # Name of the OS Deployment Plan, we should probably be able to figure it out
-ov_ansible_connection_name: 'Ansible vlan60'              # Name of the connection in the Server Profile that connects to the ansible network
+ov_template: 'Windows Worker Node (Gen9)'                 # Name of the OS Deployment Plan, we should probably be able to figure it out
+ov_ansible_connection_name: 'Ansible-A'                   # Name of the connection in the Server Profile that connects to the ansible network
+ov_ansible_redundant_connection_name: 'Ansible-B'         # Name of the connection in the Server Profile that connects to the ansible network
