@@ -79,7 +79,7 @@
 
     - name: Change Drive Letter of CD-ROM Device on Gen9 or VMware Systems
       win_shell: |
-       $cdrom = Get-WmiObject -Class win32_volume -Filter "DriveType = '5'"
+        $cdrom = Get-WmiObject -Class win32_volume -Filter "DriveType = '5'"
         if ( $cdrom )
         {
            Set-WmiInstance -input $cdrom -Arguments @{DriveLetter="T:"}
