@@ -209,32 +209,34 @@
           osDeploymentSettings:
             osDeploymentPlanUri: "{{ server_profile_templates[0].osDeploymentSettings.osDeploymentPlanUri }}"
             osCustomAttributes:
-             - name: Team0.vlanid
-               value: "{{ SPT_osCustomAttributes['Team0.vlanid'] }}"
-             - name: Team0.dhcp
+             - name: NIC1.vlanid
+               value: "{{ SPT_osCustomAttributes['NIC1.vlanid'] }}"
+             - name: NIC1.dhcp
                value: false
-             - name: Team0.connectionid
+             - name: NIC1.connectionid
                value: '{{ connection.id }}'
-             - name: Team0.networkuri
+             - name: NIC1.networkuri
                value: '{{ connection.networkUri }}'
-             - name: Team0.secondaryconnectionid
-               value:  '{{ connection2.id }}'
-             - name: Team0.secondarynetworkuri
-               value: '{{ connection2.networkUri }}'
-             - name: Team0.constraint
+             - name: NIC1.constraint
                value: 'userspecified'
-             - name: Team0.ipaddress1
+             - name: NIC1.ipaddress
                value: "{{ ip_addr | ipaddr('address') }}"
-             - name: Team0.netmask
-               value: "{{ SPT_osCustomAttributes['Team0.netmask'] }}"
-             - name: Team0.domain
-               value: "{{ SPT_osCustomAttributes['Team0.domain'] }}"
-             - name: Team0.gateway
-               value: "{{ SPT_osCustomAttributes['Team0.gateway'] }}"
-             - name: Team0.dns1
-               value: "{{ SPT_osCustomAttributes['Team0.dns1'] }}"
-             - name: Team0.dns2
-               value: "{{ SPT_osCustomAttributes['Team0.dns2'] | default(SPT_osCustomAttributes['Team0.dns1']) }}"
+             - name: NIC1.netmask
+               value: "{{ SPT_osCustomAttributes['NIC1.netmask'] }}"
+             - name: NIC1.domain
+               value: "{{ SPT_osCustomAttributes['NIC1.domain'] }}"
+             - name: NIC1.gateway
+               value: "{{ SPT_osCustomAttributes['NIC1.gateway'] }}"
+             - name: NIC1.dns1
+               value: "{{ SPT_osCustomAttributes['NIC1.dns1'] }}"
+             - name: NIC1.dns2
+               value: "{{ SPT_osCustomAttributes['NIC1.dns2'] | default(SPT_osCustomAttributes['NIC1.dns1']) }}"
+             - name: NIC2.connectionid
+               value:  '{{ connection2.id }}'
+             - name: NIC2.networkuri
+               value: '{{ connection2.networkUri }}'
+             - name: NIC2.constraint
+               value: 'userspecified'
 
     - set_fact: server_name="{{ server_hardware.name }}"
       when: touch_profile == true
