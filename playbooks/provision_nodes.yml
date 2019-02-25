@@ -147,6 +147,9 @@
         msg: "Server profile Template {{ ov_template }} does not specify an OS Deployment Plan. Aborting..." 
       when: server_profile_templates[0].osDeploymentSettings.osDeploymentPlanUri is not defined
 
+    - set_fact:
+        SPT_osCustomAttributes: "{{ server_profile_templates[0].osDeploymentSettings.osCustomAttributes | items2dict(key_name='name', value_name='value') }}"
+
     - name: Find the connection that connects to the ansible network by its name
       set_fact: connections={{ server_profile_templates.0.connectionSettings.connections | selectattr('name', 'equalto', ov_ansible_connection_name) | list }}
     - fail:
@@ -207,7 +210,7 @@
             osDeploymentPlanUri: "{{ server_profile_templates[0].osDeploymentSettings.osDeploymentPlanUri }}"
             osCustomAttributes:
              - name: Team0.vlanid
-               value: '0'
+               value: "{{ SPT_osCustomAttributes['Team0.vlanid'] }}"
              - name: Team0.dhcp
                value: false
              - name: Team0.connectionid
@@ -223,15 +226,15 @@
              - name: Team0.ipaddress1
                value: "{{ ip_addr | ipaddr('address') }}"
              - name: Team0.netmask
-               value: "{{ ip_addr | ipaddr('netmask') }}"
+               value: "{{ SPT_osCustomAttributes['Team0.netmask'] }}"
              - name: Team0.domain
-               value: '{{ domain_name }}'
+               value: "{{ SPT_osCustomAttributes['Team0.domain'] }}"
              - name: Team0.gateway
-               value: "{{ gateway }}"
+               value: "{{ SPT_osCustomAttributes['Team0.gateway'] }}"
              - name: Team0.dns1
-               value: "{{ dns[0] }}"
+               value: "{{ SPT_osCustomAttributes['Team0.dns1'] }}"
              - name: Team0.dns2
-               value: "{{ dns[1] | default (dns[0]) }}"
+               value: "{{ SPT_osCustomAttributes['Team0.dns2'] | default(SPT_osCustomAttributes['Team0.dns1']) }}"
 
     - set_fact: server_name="{{ server_hardware.name }}"
       when: touch_profile == true
