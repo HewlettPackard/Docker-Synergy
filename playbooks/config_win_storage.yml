@@ -63,21 +63,21 @@
 # play 2: Change drive letter for CD-ROM drives
 #
 #         If the system has a CD-ROM device, it will typically
-#         use the drive letter 'D' which we want to use for 
-#         our dedicated Docker storage device.  Change the 
+#         use the drive letter 'D' which we want to use for
+#         our dedicated Docker storage device.  Change the
 #         CD-ROM drive letter to 'T' to free up the 'D' drive.
 #
 #####################################################################################
 - name: Move CD-ROM drive letter (Windows)
   hosts: windows_box
-  gather_facts: false
+  gather_facts: true
   connection: local
   user: remote
   become: false
 
   tasks:
 
-    - name: Change Drive Letter of CD-ROM Device
+    - name: Change Drive Letter of CD-ROM Device on Gen9 or VMware Systems
       win_shell: |
         $cdrom = Get-WmiObject -Class win32_volume -Filter "DriveType = '5'"
         if ( $cdrom )
@@ -87,9 +87,23 @@
         } else {
            "changed: false"
         }
+      when: (ansible_product_name is search("Gen9")) or (ansible_product_name is search("VMware"))
       register: res
       changed_when: '"changed: true" in res.stdout_lines'
 
+    - name: Change Drive Letter of CD-ROM Device on Gen10 Systems
+      win_shell: |
+        $cdrom = Get-WmiObject -Class win32_volume -Filter "DriveType = '2'"
+        if ( $cdrom )
+        {
+           Set-WmiInstance -input $cdrom -Arguments @{DriveLetter="T:"}
+           "changed: true"
+        } else {
+           "changed: false"
+        }
+      when: ansible_product_name is search("Gen10")
+      register: res
+      changed_when: '"changed: true" in res.stdout_lines'
 
 #####################################################################################
 #

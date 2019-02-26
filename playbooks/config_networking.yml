@@ -34,3 +34,10 @@
         dest: /etc/hosts
         unsafe_writes: yes
 
+- hosts: windows_box
+  gather_facts: false
+
+  tasks:
+    - name: Change Windows hostname
+      win_hostname:
+        name: "{{ inventory_hostname }}"
