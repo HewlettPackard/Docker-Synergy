@@ -19,10 +19,6 @@
   connection: local
   gather_facts: false
 
-  vars_files:
-    - ../../group_vars/vars
-    - ../../group_vars/vault
-
   environment: "{{ env }}"
 
   tasks:
@@ -79,10 +75,6 @@
   gather_facts: false
   become_user: root
   become: true
-
-  vars_files:
-    - ../../group_vars/vars
-    - ../../group_vars/vault
 
   environment:
     - "{{ env }}"

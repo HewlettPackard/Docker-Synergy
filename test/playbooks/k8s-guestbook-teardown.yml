@@ -14,14 +14,10 @@
 # limitations under the License.
 ###
 ---
-- name: Install prometheus/grafana stack with  Kubelet and Apiserver monitors
+- name: Remove k8s-guestbook
   hosts: local
   connection: local
   gather_facts: false
-
-  vars_files:
-    - ../../group_vars/vars
-    - ../../group_vars/vault
 
   environment: "{{ env }}"
 
@@ -47,7 +43,7 @@
     # Assume that ucp_instance hasn't changed in the meantime
     # - include_tasks: includes/config_client.yml
 
-    - name: Apply yml files to install guestbook 
+    - name: Apply yml files to remove k8s-guestbook 
       shell: |
         . env.sh
         kubectl delete -f /tmp/k8s-examples/guestbook/frontend-service.yaml

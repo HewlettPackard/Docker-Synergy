@@ -13,9 +13,6 @@
 ---
 - name: Install sysdig
   hosts: docker
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
 
   environment: "{{ env }}"
   tasks:

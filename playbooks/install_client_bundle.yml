@@ -3,9 +3,6 @@
   gather_facts: false
   become_user: root
   become: true
-  vars_files:
-  - ../group_vars/vars
-  - ../group_vars/vault
 
   tasks:
 

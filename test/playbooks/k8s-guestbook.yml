@@ -14,14 +14,10 @@
 # limitations under the License.
 ###
 ---
-- name: Install prometheus/grafana stack with  Kubelet and Apiserver monitors
+- name: Install k8s-guestbook
   hosts: local
   connection: local
   gather_facts: false
-
-  vars_files:
-    - ../../group_vars/vars
-    - ../../group_vars/vault
 
   environment: "{{ env }}"
 
@@ -55,7 +51,7 @@
     # Assume that ucp_instance hasn't changed in the meantime
     # - include_tasks: includes/config_client.yml
 
-    - name: Apply yml files to  configure and install prometheus
+    - name: Apply yml files to  configure and install k8s-guestbook
       shell: |
         . env.sh
         kubectl apply -f /tmp/k8s-examples/guestbook/redis-master-deployment.yaml

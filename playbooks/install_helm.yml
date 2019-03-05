@@ -19,10 +19,6 @@
   become_user: root
   become: true
 
-  vars_files:
-  - ../group_vars/vars
-  - ../group_vars/vault
-
   vars:
     helm_tmp_directory: "{{lookup('env', 'TMPDIR') | default('/tmp',true)}}"
     helm_os: "linux"
