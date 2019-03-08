@@ -202,6 +202,8 @@
         password: "{{ oneview_config_password }}"
         api_version: "{{ oneview_config_api_version }}"
         state: "present"
+        params:
+          force: "{% if force_profile_creation is defined %}True{% else %}False{% endif %}"
         data:
           name: "{{ inventory_hostname }}"
           serverProfileTemplateName: "{{ ov_template }}"
