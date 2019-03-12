@@ -19,24 +19,30 @@
   connection: local
   gather_facts: false
 
-  environment: "{{ env }}"
+  environment: 
+    "{{ env }}"
+
+  vars:
+    TestMessage: "Test NFS persistent Storage" 
+    kubeconfig: "${HOME}/certs.{{ ucp_instance }}.{{ ucp_username }}/kube.yml" 
 
   tasks:
 
-    - debug: msg="Starting Playbook nfs-provisioner"
+    - include_tasks: includes/find_ucp.yml
+      vars:
+        ping_servers: "{{ groups.ucp }}"
+    - debug: var=ucp_instance
+      when: _debug is defined
 
     - name: Copy nfs-provisioner namespace template
       template:
         src: ../templates/nfs-provisioner/nfs-provisioner-namespace.yml.j2
         dest: /tmp/nfs-provisioner-namespace.yml
 
-
     - name: Copy nfs-provisioner rbac  template
       template:
         src: ../templates/nfs-provisioner/nfs-provisioner-rbac.yml.j2
         dest: /tmp/nfs-provisioner-rbac.yml
-
-
 
     - name: Copy nfs-provisioner deployment template
       template:
@@ -49,64 +55,52 @@
         dest: /tmp/nfs-provisioner-storageclass.yml
 
 
-
-    - include_tasks: includes/find_ucp.yml
-      vars:
-        ping_servers: "{{ groups.ucp }}"
-    - debug: var=ucp_instance
-      when: _debug is defined
-
-
-    # Assume playbooks/install_client_bundle.yml has been run before this
-    # Assume that ucp_instance hasn't changed in the meantime
-    # - include_tasks: includes/config_client.yml
-
     - name: Apply yml files to install nfs provisioner
       shell: |
-        . env.sh
-        kubectl apply -f /tmp/nfs-provisioner-namespace.yml
-        kubectl -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-rbac.yml
-        kubectl -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-deployment.yml
-        kubectl -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-storageclass.yml
-      args:
-        chdir: ~/certs.{{ ucp_instance }}.{{ ucp_username }}
-        executable: /usr/bin/bash
+        kubectl --kubeconfig="{{ kubeconfig }}" apply -f /tmp/nfs-provisioner-namespace.yml
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-rbac.yml
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-deployment.yml
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-storageclass.yml
       register: ps
-
-    - debug: var=ps.stdout_lines
-
-
 
     - name: Copy nfs-provisioner test-claim template
       template:
         src: ../templates/nfs-provisioner/nfs-provisioner-test-claim.yml.j2
         dest: /tmp/nfs-provisioner-test-claim.yml
 
-    - name: Copy nfs-provisioner test-pod  template
+    - name: Copy nfs-provisioner writer-pod  template
       template:
-        src: ../templates/nfs-provisioner/nfs-provisioner-test-pod.yml.j2
-        dest: /tmp/nfs-provisioner-test-pod.yml
+        src: ../templates/nfs-provisioner/nfs-provisioner-writer-pod.yml.j2
+        dest: /tmp/nfs-provisioner-writer-pod.yml
 
+    - name: Copy nfs-provisioner reader-pod  template
+      template:
+        src: ../templates/nfs-provisioner/nfs-provisioner-reader-pod.yml.j2
+        dest: /tmp/nfs-provisioner-reader-pod.yml
 
-
-    - name: Test nfs provisioner
+    - name: Test nfs provisioner (Write to persistent storage 1)
       shell: |
-        . env.sh
-        kubectl -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-test-claim.yml
-        kubectl -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-test-pod.yml
-        sleep 5 # need sleep here to allow pod/container to start up and write file
-        ssh {{ nfs_provisioner_server_ip }} ls -R {{ nfs_provisioner_server_share }}
-        echo '*** delete test-pod ***'
-        kubectl -n {{ nfs_provisioner_namespace }} delete -f /tmp/nfs-provisioner-test-pod.yml
-        echo '*** cat bar.txt ***'
-        ssh {{ nfs_provisioner_server_ip }} "cd {{ nfs_provisioner_server_share }}/{{nfs_provisioner_namespace }}*; cat bar.txt"
-        echo '*** delete test-claim ***'
-        kubectl -n {{ nfs_provisioner_namespace }} delete -f /tmp/nfs-provisioner-test-claim.yml
-      args:
-        chdir: ~/certs.{{ ucp_instance }}.{{ ucp_username }}
-        executable: /usr/bin/bash
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-test-claim.yml
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-writer-pod.yml
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} wait pod/writer-pod --for=condition=Ready 
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} delete pod writer-pod
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-reader-pod.yml
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} wait pod/reader-pod --for=condition=Ready
+      failed_when: false
       register: ps
 
-    - debug: var=ps.stdout_lines
+    - name: Test nfs provisioner (read from persistent storage)
+      shell: |
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} logs reader-pod
+      register: message
 
+    - name: Test nfs provisioner (cleanup)
+      shell: |
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} delete pod reader-pod
+
+    - debug: msg="Successfully tested NFS persistent storage" 
+      when: TestMessage in message.stdout_lines
+
+    - fail: msg="Failed to verify NFS persistent storage" 
+      when: TestMessage not in message.stdout_lines
 
