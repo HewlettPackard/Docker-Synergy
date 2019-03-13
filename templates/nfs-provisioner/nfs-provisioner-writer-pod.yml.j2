@@ -1,0 +1,21 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: writer-pod
+spec:
+  containers:
+  - name: writer-pod
+    image: gcr.io/google_containers/busybox:1.24
+    command:
+      - "/bin/sh"
+    args:
+      - "-c"
+      - "echo '{{ TestMessage }}' >/mnt/bar.txt && while [ 1 ] ; do sleep 2 ; done "
+    volumeMounts:
+      - name: nfs-pvc
+        mountPath: "/mnt"
+  restartPolicy: "Never"
+  volumes:
+    - name: nfs-pvc
+      persistentVolumeClaim:
+        claimName: test-claim
