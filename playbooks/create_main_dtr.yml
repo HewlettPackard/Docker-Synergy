@@ -25,7 +25,7 @@
     - includes/internal_vars.yml
 
   vars:
-    nfs_server: "{{ hostvars[groups['nfs'][0]].ip_addr | ipaddr('address') }}"
+    nfs_server: "{% if dtr_external_nfs is defined%}{{ dtr_external_nfs}}{% else %}{{ hostvars[groups['nfs'][0]].ip_addr | ipaddr('address') }}{% endif %}"
     http_proxy_switch:  "{% if  env.http_proxy is defined %} --http-proxy {{ env.http_proxy }} {% endif %}"
     https_proxy_switch:  "{% if  env.https_proxy is defined %} --https-proxy {{ env.https_proxy }} {% endif %}"
     no_proxy_switch:  "{% if  env.no_proxy is defined %} --no-proxy '{{ env.no_proxy }}' {% endif %}"

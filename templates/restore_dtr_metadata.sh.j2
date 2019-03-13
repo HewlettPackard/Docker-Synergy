@@ -27,6 +27,7 @@ else
   ucp_insecure_switch="--ucp-insecure-tls"
   env_switch=""
 fi
+nfs_server="{% if dtr_external_nfs is defined%}{{ dtr_external_nfs}}{% else %}{{ hostvars[groups['nfs'][0]].ip_addr | ipaddr('address') }}{% endif %}"
 
 ssh -oStrictHostKeyChecking=no {{ backup_server }} "cat {{ backup_dtr_meta }}" | zcat | \
   docker run -i --rm --env UCP_USERNAME --env UCP_PASSWORD $env_switch docker/dtr:{{ dtr_version }} restore \
@@ -35,5 +36,5 @@ ssh -oStrictHostKeyChecking=no {{ backup_server }} "cat {{ backup_dtr_meta }}" |
     --ucp-node {{ groups.dtr_main[0] }}.{{ domain_name }} \
     --replica-id ${replica_id}  \
     --dtr-external-url https://{{ groups.dtr[0] }}.{{ domain_name }} \
-    --nfs-storage-url nfs://{{ groups.nfs[0] }}.{{ domain_name }}/docker-images \
+    --nfs-storage-url nfs://${nfs_server}{{ images_folder }}\
     {{ http_proxy_switch }} {{ https_proxy_switch }} {{ no_proxy_switch }} 
