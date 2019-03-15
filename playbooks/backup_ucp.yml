@@ -18,11 +18,14 @@
   hosts: ucp_main 
   gather_facts: false
 
+  vars:
+    other_envs:
+      UCP_USERNAME: "{{ ucp_username }}"
+      UCP_PASSWORD: "{{ ucp_password }}"
+      UCP_CA: "{{ ucp_ca_cert | default('') }}"
+
   environment:
-    - "{{ env }}"
-    - UCP_USERNAME: "{{ ucp_username }}"
-    - UCP_PASSWORD: "{{ ucp_password }}"
-    - UCP_CA: "{{ ucp_ca_cert | default('') }}"
+    "{{ env | combine( other_envs ) }}"
 
   tasks:
 #
