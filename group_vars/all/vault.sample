@@ -15,4 +15,4 @@ splunk_uf_password: 'YourPa$$word12'
 oneview_config_password: 'EnterOneViewPa$$word'
 windows_product_key: '#####-#####-#####-#####-#####'
 #backup_passphrase must be at least 12 characters long
-backup_passphrase: 'EnterouriSecretpassphrase123'
+backup_passphrase: 'EnterYourSecretpassphrase123'

@@ -51,7 +51,7 @@ ucp_version: '3.1.4'
 
 
 #NFS options
-#nfs_external_server: vfs3par.cloudra.local      # uncomment is using an external NFS server to store the DTR images such as a VFS on an HPE 3PAR Array
+#nfs_external_server: vfs3par.cloudra.local      # uncomment if using an external NFS server to store the DTR images such as a VFS on an HPE 3PAR Array
 nfs_mount_options: 'rw,sync,actimeo=0'           # NFS mount options
 images_folder: '/vfs3par/vfs3par/fs_clh/dtr'     # NFS share where the DTR images are stored, this share should be created if the NFS server is external
 dtr_volume_backend_name: admin-lvol-nfs          # you should not have to change this value
@@ -138,7 +138,6 @@ sysdig_tags: 'location:EnterCity,role:Enterprise CaaS on Synergy,owner:Customer 
 sysdig_restricted_control_role: 'Restricted Control'
 k8s_cluster: 'ucp_hpe-ucp.cloudra.local'
 
-#k8s nfs_provisionner_role obsolete
 nfs_provisioner_name: "hpe.com/nfs" 			# don't change unless you know what you are doing
 nfs_provisioner_role: 'nfs-provisioner-runner'
 nfs_provisioner_serviceaccount: 'nfs-provisioner'
