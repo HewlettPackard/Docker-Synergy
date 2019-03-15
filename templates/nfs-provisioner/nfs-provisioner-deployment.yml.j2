@@ -25,11 +25,11 @@ spec:
             - name: PROVISIONER_NAME
               value: '{{ nfs_provisioner_name }}'
             - name: NFS_SERVER
-              value: '{{ nfs_provisioner_server_ip }}'
+              value: '{{ ivar_nfs_server }}'
             - name: NFS_PATH
               value: '{{ nfs_provisioner_server_share }}'
       volumes:
         - name: nfs-client-root
           nfs:
-            server: '{{ nfs_provisioner_server_ip }}'
+            server: '{{ ivar_nfs_server }}'
             path: '{{ nfs_provisioner_server_share }}'

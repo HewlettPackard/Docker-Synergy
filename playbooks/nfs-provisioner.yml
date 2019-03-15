@@ -19,6 +19,9 @@
   connection: local
   gather_facts: false
 
+  vars_files:
+    - includes/internal_vars.yml
+
   environment: 
     "{{ env }}"
 

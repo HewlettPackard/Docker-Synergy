@@ -22,10 +22,10 @@
 - name: Deploy Linux VMs
   hosts: vms:!vm_wrk_win
   gather_facts: false
-  connection: local
+#  connection: local
 
   environment:
-    - "{{ env }}"
+    "{{ env }}"
 
   tasks:
 
@@ -54,10 +54,10 @@
 
   handlers:
     - name: CreateVMsWait
-      delegate_to: localhost
       wait_for_connection:
-        delay: 120
-        timeout: 300
+        delay: 5
+        sleep: 15
+        timeout: 900
 
 
 #######################################################################

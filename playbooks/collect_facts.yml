@@ -18,11 +18,8 @@
   hosts: localhost
   gather_facts: false
 
-  vars_files:
-    - ../group_vars/backups
-
   environment:
-    - "{{ env }}"
+    "{{ env }}"
 
   tasks:
     - include_tasks: includes/find_ucp.yml

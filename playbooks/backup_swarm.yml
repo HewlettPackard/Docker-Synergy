@@ -17,10 +17,8 @@
 - hosts: ucp_main
   gather_facts: false
 
-  vars_files:
-    - ../group_vars/backups
-
-  environment: "{{ env }}"
+  environment:
+    "{{ env }}"
 
   tasks:
 #

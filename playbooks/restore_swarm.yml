@@ -21,7 +21,6 @@
   become: true
 
   vars_files:
-    - ../group_vars/backups
     - includes/internal_vars.yml
 
   vars:

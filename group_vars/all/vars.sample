@@ -46,13 +46,16 @@ ntp_servers: ['10.60.1.123','0.us.pool.net.org','1.us.pool.net.org']
 docker_ee_reponame: 'stable-18.09'
 docker_ee_version: 'docker-ee-18.09.0-3.el7.x86_64'
 rhel_version: '7'
-dtr_version: '2.6.0'
-ucp_version: '3.1.0'
+dtr_version: '2.6.3'
+ucp_version: '3.1.4'
 
-#NFS backend for DTR
-#images_folder: '/docker-images'
-images_folder: '/vfs3par/vfs3par/fs_clh/dtr' 
-dtr_external_nfs: vfs3par.cloudra.local
+
+#NFS options
+#nfs_external_server: vfs3par.cloudra.local # uncomment is using an external NFS server to storage the DTR images such as a VFS on an HPE 3PAR Array
+nfs_mount_options: 'rw,sync,actimeo=0'      # NFS mount options
+
+images_folder: '/vfs3par/vfs3par/fs_clh/dtr'     # NFS share where the DTR images are stored, this share should be created if the NFS server is external
+dtr_volume_backend_name: admin-lvol-nfs          # you should not have to change this value
 
 license_file: '/root/license.lic'
 ucp_username: 'admin'
@@ -136,18 +139,14 @@ sysdig_tags: 'location:EnterCity,role:Enterprise CaaS on Synergy,owner:Customer 
 sysdig_restricted_control_role: 'Restricted Control'
 k8s_cluster: 'ucp_hpe-ucp.cloudra.local'
 
-#k8s nfs provisionner role name
+#k8s nfs_provisionner_role obsolete
+nfs_provisioner_name: "hpe.com/nfs" 			# don't change unless you know what you are doing
 nfs_provisioner_role: 'nfs-provisioner-runner'
-nfs_provisioner_name: "hpe.com/nfs"
+nfs_provisioner_serviceaccount: 'nfs-provisioner'
 nfs_provisioner_storage_class_name: "nfs"
 nfs_provisioner_namespace: nfsstorage
-nfs_provisioner_serviceaccount: 'nfs-provisioner'
-
-#nfs_provisioner_server_ip: vfs3par.cloudra.local
-#nfs_provisioner_server_share: '/vfs3par/vfs3par/fs_clh/share'
-nfs_provisioner_server_ip: clh-nfs.cloudra.local
-nfs_provisioner_server_share: '/k8s'
-
+nfs_provisioner_server_share: '/vfs3par/vfs3par/fs_clh/k8s'
+#nfs_provisioner_server_ip: foo.server.com              # obsolete , replaced by nfs_external_server, if the latter is not defined, default to the NFS VM
 
 #storage driver for docker nodes: accepted values are 'overlay2' and devicemapper
 #docker_storage_driver: overlay2

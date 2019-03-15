@@ -21,11 +21,13 @@ then
   backup_ucp="-e backup_name=${tag}_ucp"
   backup_dtr_meta="-e backup_name=${tag}_dtr_meta"
   backup_dtr_data="-e backup_name=${tag}_dtr_data"
+  backup_k8s_pvols="-e backup_name=${tag}_k8s_pvols"
 else
   backup_swarm=""
   backup_ucp=""
   backup_dtr_meta=""
   backup_dtr_data=""
+  backup_k8s_pvols=""
 fi
 
 vswitch=${vault_switch:-}
@@ -36,3 +38,5 @@ sleep 20
 ansible-playbook -i hosts playbooks/backup_dtr_metadata.yml ${vswitch} $backup_dtr_meta
 sleep 20
 ansible-playbook -i hosts playbooks/backup_dtr_images.yml   ${vswitch} $backup_dtr_data
+sleep 20
+ansible-playbook -i hosts playbooks/backup_k8s_pvols.yml    ${vswitch} $backup_k8s_pvols

@@ -135,3 +135,8 @@ dtr_lb_fqdn_legacy: "{% if groups.dtr_lb is defined and groups.dtr_lb | length >
 dtr_lb_fqdn_vrrp: "{% if loadbalancers is defined and loadbalancers.dtr is defined %}{{ loadbalancers.dtr.public_fqdn }}{% endif %}"
 dtr_lb_fqdn: "{% if dtr_lb_fqdn_vrrp | length > 0 %}{{ dtr_lb_fqdn_vrrp }}{% else %}{{ dtr_lb_fqdn_legacy }}{% endif %}"
 
+
+#
+ivar_nfs_server: "{% if nfs_external_server is defined%}{{ nfs_external_server }}{% else %}{{ hostvars[groups['nfs'][0]].ip_addr | ipaddr('address') }}{% endif %}"
+ivar_nfs_mountpoint: "/mnt/nfsmount"
+
