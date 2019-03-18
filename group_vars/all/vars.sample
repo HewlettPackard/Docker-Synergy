@@ -53,7 +53,7 @@ ucp_version: '3.1.4'
 #NFS options
 #nfs_external_server: vfs3par.cloudra.local      # uncomment if using an external NFS server to store the DTR images such as a VFS on an HPE 3PAR Array
 nfs_mount_options: 'rw,sync,actimeo=0'           # NFS mount options
-images_folder: '/vfs3par/vfs3par/fs_clh/dtr'     # NFS share where the DTR images are stored, this share should be created if the NFS server is external
+images_folder: '/vfs3par/vfs3par/fs_hpe/dtr'     # NFS share where the DTR images are stored, this share should be created if the NFS server is external
 dtr_volume_backend_name: admin-lvol-nfs          # you should not have to change this value
 
 license_file: '/root/license.lic'
