@@ -20,7 +20,6 @@
 
   vars_files:
     - includes/internal_vars.yml
-#    - ../group_vars/backups
 
   vars:
     http_proxy_switch:  "{% if  env.http_proxy is defined %} --http-proxy {{ env.http_proxy }} {% endif %}"

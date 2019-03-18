@@ -14,7 +14,20 @@
 # limitations under the License.
 ###
 #
-# Restore DTR images (NFS)
+# Create the docker volume that will hold the registry data
 #
-cd "{{ ivar_nfs_mountpoint }}"
-tar zxvf {{ backup_dtr_data }} .
+
+replica_id="$1"
+nfs_volume="{{ dtr_volume_backend_name }}"
+nfs_options="{{ nfs_mount_options }}"
+nfs_server="{{ ivar_nfs_server }}"
+
+volume=$(docker volume ls | awk "/$nfs_volume/ {print \$2}")
+if [ "$volume" == "$nfs_volume" ]
+then
+  echo Volume $nfs_volume was found
+else
+  docker volume create -o type=nfs \
+     -o o=addr=${nfs_server},$nfs_options \
+     -o 'device=:{{ images_folder }}' $nfs_volume
+fi

@@ -15,6 +15,7 @@
 - import_playbook: playbooks/persistent_storage.yml
 - import_playbook: playbooks/install_nfs_server.yml
 - import_playbook: playbooks/install_nfs_clients.yml
+- import_playbook: playbooks/restore_k8s_pvols.yml
 - import_playbook: playbooks/restore_ucp.yml
 - import_playbook: playbooks/restore_dtr_images.yml
 - import_playbook: playbooks/restore_dtr_metadata.yml

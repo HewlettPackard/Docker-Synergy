@@ -19,6 +19,9 @@
   connection: local
   gather_facts: false
 
+  vars_files:
+    - includes/internal_vars.yml
+
   environment: 
     "{{ env }}"
 
@@ -78,7 +81,7 @@
         src: ../templates/nfs-provisioner/nfs-provisioner-reader-pod.yml.j2
         dest: /tmp/nfs-provisioner-reader-pod.yml
 
-    - name: Test nfs provisioner (Write to persistent storage 1)
+    - name: Test nfs provisioner (Write to persistent storage)
       shell: |
         kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-test-claim.yml
         kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} apply -f /tmp/nfs-provisioner-writer-pod.yml
@@ -96,7 +99,7 @@
 
     - name: Test nfs provisioner (cleanup)
       shell: |
-        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} delete pod reader-pod
+        kubectl --kubeconfig="{{ kubeconfig }}" -n {{ nfs_provisioner_namespace }} delete pod reader-pod --grace-period=2
 
     - debug: msg="Successfully tested NFS persistent storage" 
       when: TestMessage in message.stdout_lines

@@ -14,7 +14,8 @@
 # limitations under the License.
 ###
 ---
-- hosts: localhost
+- name: Backup Kubernetes Persistent Volumes
+  hosts: localhost
   gather_facts: false
   force_handlers: true
   become: true
@@ -30,11 +31,28 @@
     - name: Mount the NFS Share
       mount:
         fstype: nfs
-        src: "{{ ivar_nfs_server }}:{{ images_folder }}"
+        src: "{{ ivar_nfs_server }}:{{ nfs_provisioner_server_share }}"
         path: "{{ ivar_nfs_mountpoint }}"
         opts: "{{ nfs_mount_options }}"
         state: mounted
       notify:  unmount the NFS Share
+#
+# Find a UCP endpoint and fail the playbook is none is found
+#
+    - include_tasks: includes/find_ucp.yml
+      vars:
+        ping_servers: "{{ groups.ucp }}"
+    - debug: var=ucp_instance
+      when: _debug is defined
+    - fail: 
+      when: ucp_instance == ".none." 
+#
+# Retrieve the version of UCP
+#
+    - include_tasks: includes/get_ucp_version.yml
+    - debug: msg="ucp_version {{ ucp_version }}, detected version {{ detected_ucp_version }}"
+      when: _debug is defined
+
 #
 # Get a timestamp, will be used to name the backup
 #
@@ -45,52 +63,19 @@
       set_fact:
         timestamp: "{{ timestamp.stdout }}"
 
-    - include_tasks: includes/find_dtr.yml
-      vars:
-        ping_servers: "{{ groups.dtr }}"
-    - fail: 
-      when: dtr_instance == ".none." 
-
 #
-# collect some metadata from a DTR node
+# collect some metadata from a UCP node
 #
-    - name: Creates directory
-      delegate_to: "{{ dtr_instance }}"
-      file:
-        path: /root/scripts
-        state: directory
-
-    - name: Copy util to backup VM
-      delegate_to: "{{ dtr_instance }}"
-      template:
-        src: ../templates/dtr_get_info.sh.j2
-        dest: /root/scripts/dtr_get_info.sh
-        mode: 0744
-
-    - name: Get the replica ID
-      shell: /root/scripts/dtr_get_info.sh replica
-      delegate_to: "{{ dtr_instance }}"
-      register: res 
 
     - set_fact:
-        replica_id: "{{ res.stdout }}" 
-
-    - name: Get the DTR version number
-      delegate_to: "{{ dtr_instance }}"
-      shell: /root/scripts/dtr_get_info.sh version
-      register: res
-
-    - set_fact:
-        detected_dtr_version: "{{ res.stdout }}"
-
-    - debug:
-        msg: "dtr_version: {{ detected_dtr_version }}"
-        verbosity: 1
-
-    - set_fact:
-        backup_name:  "backup_dtr_data_{{ replica_id }}_{{ inventory_hostname }}_{{ timestamp }}"
+        backup_name:   "backup_pvols_{{ timestamp }}"
       when: backup_name is undefined
 
+    - debug: var=backup_name
+      
+#
+# Create backup script and run it
+#
     - name: Creates directory
       file:
         path: /tmp/scripts
@@ -98,14 +83,17 @@
 
     - name: Copy backup script 
       template:
-        src: ../templates/backup_dtr_images.sh.j2
-        dest: /tmp/scripts/backup_dtr_images.sh
+        src: ../templates/backup_k8s_pvols.sh.j2
+        dest: /tmp/scripts/backup_k8s_pvols.sh
         mode: 0744
 
-    - name: Backup the image data
-      shell: /tmp/scripts/backup_dtr_images.sh {{ backup_name }}
+    - name: Backup the Persistent Volumes
+      shell: /tmp/scripts/backup_k8s_pvols.sh {{ backup_name }}
       register: res
 
+#
+# Backup some metedata
+#
     - name: Create a temporary directory to receive files that contains backup metadata
       tempfile:
         state: directory
@@ -133,7 +121,7 @@
     - name: unmount the NFS Share
       mount:
         fstype: nfs
-        src: "{{ ivar_nfs_server }}:{{ images_folder }}"
+        src: "{{ ivar_nfs_server }}:{{ nfs_provisioner_server_share }}"
         path: "{{ ivar_nfs_mountpoint }}"
         opts: "{{ nfs_mount_options }}"
         state: unmounted

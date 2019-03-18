@@ -14,7 +14,11 @@
 # limitations under the License.
 ###
 #
-# Restore DTR images (NFS)
+# perform a backup of the K8S Persistent volumes
 #
-cd "{{ ivar_nfs_mountpoint }}"
-tar zxvf {{ backup_dtr_data }} .
+
+backup_name=$1
+backup_data=${backup_name}.tgz 
+ 
+dirname="{{ ivar_nfs_mountpoint }}"
+(cd $dirname ; tar -czf {{ backup_dest }}/${backup_data} . )

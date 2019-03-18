@@ -25,18 +25,17 @@
     - includes/internal_vars.yml
 
   vars:
-    nfs_server: "{{ hostvars[groups['nfs'][0]].ip_addr | ipaddr('address') }}"
     http_proxy_switch:  "{% if  env.http_proxy is defined %} --http-proxy {{ env.http_proxy }} {% endif %}"
     https_proxy_switch:  "{% if  env.https_proxy is defined %} --https-proxy {{ env.https_proxy }} {% endif %}"
     no_proxy_switch:  "{% if  env.no_proxy is defined %} --no-proxy '{{ env.no_proxy }}' {% endif %}"
 
   environment:
-    - UCP_USERNAME: "{{ ucp_username }}" 
-    - UCP_PASSWORD: "{{ ucp_password }}" 
-    - UCP_CA: "{{ ucp_ca_cert | default('') }}"
-    - DTR_CA: "{{ dtr_ca_cert | default('') }}"
-    - DTR_CERT: "{{ dtr_server_cert | default('') }}"
-    - DTR_KEY: "{{ dtr_server_key | default('') }}"
+    UCP_USERNAME: "{{ ucp_username }}" 
+    UCP_PASSWORD: "{{ ucp_password }}" 
+    UCP_CA: "{{ ucp_ca_cert | default('') }}"
+    DTR_CA: "{{ dtr_ca_cert | default('') }}"
+    DTR_CERT: "{{ dtr_server_cert | default('') }}"
+    DTR_KEY: "{{ dtr_server_key | default('') }}"
 
 
   pre_tasks:
@@ -79,9 +78,24 @@
 # Install DTR if it is not running, 
 #
 
+    - name: Create script directory
+      file:
+        path: /root/scripts
+        state: directory
+
+    - name: Copy before install script to target
+      template:
+        src: ../templates/dtr_before_install.sh.j2
+        dest: /root/scripts/dtr_before_install.sh
+        mode: 0744
+
+    - name: Run Before Install Script
+      shell: /root/scripts/dtr_before_install.sh ""
+      when: dtr_instance == ".none." 
+
     - name: Install first DTR node
       command: docker run --env UCP_USERNAME --env UCP_PASSWORD {{ switch_env_ucp_ca }} {{ switch_env_dtr_certificates }} docker/dtr:{{ dtr_version }} install 
-             --nfs-storage-url nfs://{{ nfs_server }}{{ images_folder }}
+             --dtr-storage-volume "{{ dtr_volume_backend_name }}"
              --ucp-node {{ inventory_hostname }}.{{ domain_name }}
              --ucp-url https://{{ ucp_instance }}.{{ domain_name }}
              --dtr-external-url https://{{ groups.dtr[0] }}.{{ domain_name }}

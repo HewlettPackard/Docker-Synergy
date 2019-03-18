@@ -20,7 +20,6 @@
 
   vars_files:
     - includes/internal_vars.yml
-    - ../group_vars/backups
 
   vars:
     http_proxy_switch:  "{% if  env.http_proxy is defined %} --http-proxy {{ env.http_proxy }} {% endif %}"
@@ -80,16 +79,36 @@
       file:
         path: /root/scripts
         state: directory
+
     - name: Copy UCP root CA Certificate if one is specified
       copy:
         src: "{{ ucp_certs_dir }}/ca.pem"
         dest: /root/scripts/ca.pem
       when: ucp_certs_dir is defined
-    - name: Copy restore script to target
-      template: src=../templates/restore_dtr_metadata.sh.j2 dest=/root/scripts/restore_dtr_metadata.sh
+
+    - name: Copy before install script to target
+      template:
+        src: ../templates/dtr_before_install.sh.j2 
+        dest: /root/scripts/dtr_before_install.sh
+    - file:
+        path: /root/scripts/dtr_before_install.sh
+        mode: 0744
+
+    - name: Copy DTR restore script to target
+      template:
+        src: ../templates/restore_dtr_metadata.sh.j2 
+        dest: /root/scripts/restore_dtr_metadata.sh
     - file:
         path: /root/scripts/restore_dtr_metadata.sh
         mode: 0744
+
+    - name: Run Before Install Script
+      shell: /root/scripts/dtr_before_install.sh {{ backup_dtr_id }}
+      environment:
+        UCP_USERNAME: "{{ucp_username}}"
+        UCP_PASSWORD: "{{ucp_password}}"
+      register: res
+      when: existing_dtr_replica_id == "0"
 
     - name: restore DTR
       shell: /root/scripts/restore_dtr_metadata.sh {{ backup_dtr_id }}

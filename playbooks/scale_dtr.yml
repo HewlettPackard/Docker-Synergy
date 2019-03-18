@@ -20,7 +20,6 @@
   gather_facts: false
 
   vars_files:
-    - ../group_vars/backups
     - includes/internal_vars.yml
 
   vars:
@@ -79,6 +78,27 @@
 #
 # existing_dtr_replica_id is returned by the role get-dtr-replica
 #
+
+#
+# Implement https://success.docker.com/article/dtr-26-lost-tags-after-reconfiguring-storage#restoretoalocalnfsvolume
+#
+    - name: Create script directory
+      file:
+        path: /root/scripts
+        state: directory
+
+    - name: Copy before install script to target
+      template:
+        src: ../templates/dtr_before_install.sh.j2
+        dest: /root/scripts/dtr_before_install.sh
+    - file:
+        path: /root/scripts/dtr_before_install.sh
+        mode: 0744
+
+    - name: Run Before Install Script
+      shell: /root/scripts/dtr_before_install.sh ""
+      register: res
+      when: not dtr_is_there and existing_dtr_replica_id != 0
 
     - name: Join DTR nodes
       command: docker run --env UCP_USERNAME --env UCP_PASSWORD {{ switch_env_ucp_ca }}  docker/dtr:{{ dtr_version }} join 
