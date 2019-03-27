@@ -4,6 +4,7 @@ ov_ansible_redundant_connection_name: ansibleB     # Name of the 2nd connection 
 
 disk2: '/dev/mapper/mpatha' 
 disk2_part: '/dev/mapper/mpatha1'
+orchestrator: kubernetes # or swarm
 fcoe_devices: ['ens3f2','ens3f3']
 
 

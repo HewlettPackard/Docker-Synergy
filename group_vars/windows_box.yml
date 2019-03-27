@@ -9,7 +9,7 @@ ansible_winrm_read_timeout_sec: 300
 win_username: 'Administrator'
 # when behind a proxy download the remoting script to a local web server and have the deployment use the local copy
 windows_winrm_script: 'https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'
-windows_update: true
+windows_update: false
 windows_docker_drive: 'D'
 windows_docker_directory: 'D:\\DockerData'
 windows_docker_volume_label: 'DockerVol'

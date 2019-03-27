@@ -21,7 +21,7 @@
   become: true
 
   environment:
-    - "{{ env }}"
+    "{{ env }}"
 
   roles:
     - role: hpe.openports

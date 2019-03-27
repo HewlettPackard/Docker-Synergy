@@ -3,7 +3,7 @@ ram: '65536'
 disk2_size: '500'
 disk2: '/dev/sdb'
 disk2_part: '/dev/sdb1'
-orchestrator: kubernetes
+orchestrator: kubernetes # or swarm
 
 #
 # the following data structures are specific to VMWare VMs and are used as such by the ansible module vmware_guest 
