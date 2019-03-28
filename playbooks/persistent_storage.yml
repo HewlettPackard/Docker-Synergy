@@ -27,6 +27,7 @@
 
     - name: Check if vsphere plugin is installed
       shell: docker plugin ls | grep vsphere | wc -l
+      changed_when: false
       register: vsphere_installed
 
     - name: Install vsphere plugin
@@ -87,7 +88,9 @@
   become: false
 
   tasks:
-    - debug: msg=" Installing 3par plugin" 
+    - debug:
+        msg: "not implement" 
+        verbosity: 1
 
 - name: Persistent Storage for Docker Windows (Bare metal)
   hosts: docker:&windows_box:&bms
@@ -97,6 +100,7 @@
   become: false
 
   tasks:
-    - debug: msg="3par plugin not supported on Windows" 
-
+    - debug:
+        msg: "not implemented" 
+        verbosity: 1
 

@@ -1,41 +1,40 @@
 [ucp_main]
-clh-ucp01 ip_addr='10.10.174.112/22' esxi_host='simply04.am2.cloudra.local'
+hpe-ucp01 ip_addr='10.10.174.112/22' esxi_host='esx04.cloudra.local'
 [ucp]
-clh-ucp01 ip_addr='10.10.174.112/22' esxi_host='simply04.am2.cloudra.local'
-clh-ucp02 ip_addr='10.10.174.113/22' esxi_host='simply05.am2.cloudra.local'
-clh-ucp03 ip_addr='10.10.174.114/22' esxi_host='simply06.am2.cloudra.local'
+hpe-ucp01 ip_addr='10.10.174.112/22' esxi_host='esx04.cloudra.local'
+hpe-ucp02 ip_addr='10.10.174.113/22' esxi_host='esx05.cloudra.local'
+hpe-ucp03 ip_addr='10.10.174.114/22' esxi_host='esx06.cloudra.local'
 
 [dtr_main]
-clh-dtr01 ip_addr='10.10.174.115/22' esxi_host='simply04.am2.cloudra.local'
+hpe-dtr01 ip_addr='10.10.174.115/22' esxi_host='esx04.cloudra.local'
 [dtr]
-clh-dtr01 ip_addr='10.10.174.115/22' esxi_host='simply04.am2.cloudra.local'
-clh-dtr02 ip_addr='10.10.174.116/22' esxi_host='simply05.am2.cloudra.local'
-clh-dtr03 ip_addr='10.10.174.117/22' esxi_host='simply06.am2.cloudra.local'
-
+hpe-dtr01 ip_addr='10.10.174.115/22' esxi_host='esx04.cloudra.local'
+hpe-dtr02 ip_addr='10.10.174.116/22' esxi_host='esx05.cloudra.local'
+hpe-dtr03 ip_addr='10.10.174.117/22' esxi_host='esx06.cloudra.local'
 
 [vm_wrk_lnx]
-clh-worker01 ip_addr='10.10.174.122/22' esxi_host='simply04.am2.cloudra.local' 
-#clh-worker02 ip_addr='10.10.174.123/22' esxi_host='simply05.am2.cloudra.local'
-#clh-worker03 ip_addr='10.10.174.124/22' esxi_host='simply06.am2.cloudra.local'  orchestrator=swarm
-
-[bm_wrk_lnx]
-clh-worker04 ip_addr='10.10.174.126/22' enclosure='CN759000CK' bay=3
-clh-worker05 ip_addr='10.10.174.127/22' enclosure='CN759000CK' bay=4
+hpe-worker01 ip_addr='10.10.174.122/22' esxi_host='esx04.cloudra.local' 
+hpe-worker02 ip_addr='10.10.174.123/22' esxi_host='esx05.cloudra.local' orchestrator=swarm
 
 [vm_wrk_win]
+hpe-worker03 ip_addr='10.10.174.124/22' esxi_host='esx06.cloudra.local'  
+
+[bm_wrk_lnx]
+clh-worker04 ip_addr='10.10.174.125/16' enclosure='Rack1-fr1' bay=7 ov_template='RedHat760_fcoe_gen9_1_v1.0.3'
+hpe-worker05 ip_addr='10.10.174.126/16' enclosure='Rack1-fr2' bay=3 ov_template='RedHat760_fcoe_gen10_1_v1.0.3'
 
 [bm_wrk_win]
-#clh-worker06 ip_addr='10.10.174.128/22' enclosure='CN759000CK'
+hpe-worker06 ip_addr='10.10.174.127/16' enclosure='Rack1-fr3' bay=8 ov_template='Win2016_Gen9_1_v1.0.3'
 
-## LOAD BALANCERS
+# legacy load balancers, groups [ucp_lb], [dtr_lb], [worker_lb] and [lbs] must exists even if you don't use them
 [ucp_lb]
-#clh-ucp ip_addr='10.10.174.118/22'    external_addr='10.13.180.10/24' esxi_host='simply06.am2.cloudra.local'
+#hpe-ucp ip_addr='10.10.174.118/22' esxi_host='esx06.cloudra.local'
 
 [dtr_lb]
-#clh-dtr ip_addr='10.10.174.119/22'    external_addr='10.13.180.11/24' esxi_host='simply07.am2.cloudra.local'
+#hpe-dtr ip_addr='10.10.174.119/22' esxi_host='esx07.cloudra.local'
 
 [worker_lb]
-#clh-worker ip_addr='10.10.174.120/22' external_addr='10.13.180.12/24' esxi_host='simply05.am2.cloudra.local'
+#hpe-worker ip_addr='10.10.174.120/22' esxi_host='esx05.cloudra.local'
 
 [lbs:children]
 ucp_lb
@@ -43,18 +42,18 @@ dtr_lb
 worker_lb
 
 [loadbalancer]
-clh-lb1 ip_addr='10.10.174.165/22' external_addr='10.13.180.25/24' esxi_host='simply04.am2.cloudra.local' ucp=true worker=true
-clh-lb2 ip_addr='10.10.174.166/22' external_addr='10.13.180.26/24' esxi_host='simply05.am2.cloudra.local' dtr=true
+hpe-lb1 ip_addr='10.10.174.165/22' esxi_host='esx04.cloudra.local' ucp=true worker=true
+hpe-lb2 ip_addr='10.10.174.166/22' esxi_host='esx05.cloudra.local' dtr=true
 
 [nfs]
-clh-nfs ip_addr='10.10.174.121/22'    esxi_host='simply04.am2.cloudra.local'
+hpe-nfs ip_addr='10.10.174.121/22'    esxi_host='esx04.cloudra.local'
 
 [logger]
-clh-logger ip_addr='10.10.174.125/22' esxi_host='simply05.am2.cloudra.local'
+hpe-logger ip_addr='10.10.174.125/22' esxi_host='esx05.cloudra.local'
 
 # Local 
 [local]
-localhost ansible_python_interpreter=/root/foo/bin/python ansible_connection=local
+localhost ansible_connection=local
 
 
 #
