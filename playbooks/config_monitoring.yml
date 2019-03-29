@@ -15,7 +15,7 @@
 ### 
 ---
 - name: Deploy Grafana and Prometheus Stack for Swarm
-  hosts: vms
+  hosts: linux_box
   gather_facts: false
   become_user: root
   become: true
@@ -24,7 +24,7 @@
     - includes/internal_vars.yml
 
   environment:
-    - "{{ env }}"
+    "{{ env }}"
 
   roles:
 
@@ -37,7 +37,9 @@
   tasks:
 
     - name: Configure all VMS to send their logs to the logger VM
-      template: src=../templates/rsyslog.conf.j2 dest=/etc/rsyslog.conf
+      template:
+        src: ../templates/rsyslog.conf.j2
+        dest: /etc/rsyslog.conf
       when: inventory_hostname in groups.vms and inventory_hostname not in groups.logger
       notify: Restart Rsyslog
 
@@ -51,7 +53,9 @@
       when: inventory_hostname in groups.ucp
 
     - name: Copy docker compose file
-      template: src=../monitoring/docker-compose.yml.j2 dest=/root/monitoring/docker-compose.yml
+      template:
+        src: ../monitoring/docker-compose.yml.j2
+        dest: /root/monitoring/docker-compose.yml
       when: inventory_hostname in groups.ucp
 
     - name: Deploy monitoring stack
