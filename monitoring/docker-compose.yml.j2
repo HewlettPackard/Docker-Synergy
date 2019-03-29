@@ -78,7 +78,7 @@ services:
     networks:
       - monitoring
     volumes:
-      - {{prom_persistent_vol_name}}:/prometheus
+      - {{prom_persistent_vol_name}}:/data
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       --config.file=/etc/prometheus/prometheus.yml
