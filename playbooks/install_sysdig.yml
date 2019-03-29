@@ -43,7 +43,7 @@
     #
     - name: Configure required firewall ports
       firewalld:
-        port: 6666/tcp
+        port: "{{ sysdig_collector_port }}/tcp"
         permanent: true
         immediate: true
         state: enabled
@@ -61,11 +61,11 @@
     #
     - name: Check connectivity to collector.sysdigcloud.com port 6666
       wait_for:
-        host: collector.sysdigcloud.com
-        port: 6666
+        host: "{{ sysdig_collector }}"
+        port: "{{ sysdig_collector_port }}"
         state: started
         timeout: 10
-        msg: "Connectivity to collector.sysdigcloud.com port 6666 failed!  Exiting."
+        msg: "Connectivity to {{ sysdig_collector }} port {{ sysdig_collector_port }} failed!  Exiting."
 
     - set_fact:
         sysdig_connection: true
@@ -175,7 +175,7 @@
     #
     - name: Configure required firewall ports
       firewalld:
-        port: 6666/tcp
+        port: "{{ sysdig_collector_port }}/tcp"
         permanent: true
         immediate: true
         state: enabled
@@ -194,10 +194,10 @@
     - name: Check connectivity to collector.sysdigcloud.com port 6666
       wait_for:
         host: collector.sysdigcloud.com
-        port: 6666
+        port: "{{ sysdig_collector_port }}/tcp"
         state: started
         timeout: 10
-        msg: "Connectivity to collector.sysdigcloud.com port 6666 failed!  Exiting."
+        msg: "Connectivity to {{ sysdig_collector }} port {{ sysdig_collector_port }} failed!  Exiting."
 
     - set_fact:
         sysdig_connection: true
