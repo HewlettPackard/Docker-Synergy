@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>HPE Enterprise Containers | Getting started with knative serving</title>
+    <meta name="description" content="An example of running a &quot;serverless&quot; app">
+    
+    
+    <link rel="preload" href="/assets/css/styles.4458c4ff.css" as="style"><link rel="preload" href="/assets/js/app.4458c4ff.js" as="script"><link rel="preload" href="/assets/js/35.30905600.js" as="script"><link rel="prefetch" href="/assets/js/1.9435caa1.js"><link rel="prefetch" href="/assets/js/10.56ec9916.js"><link rel="prefetch" href="/assets/js/100.1865d5f9.js"><link rel="prefetch" href="/assets/js/101.09c76994.js"><link rel="prefetch" href="/assets/js/102.1e738fb2.js"><link rel="prefetch" href="/assets/js/103.39341665.js"><link rel="prefetch" href="/assets/js/104.7261cd8b.js"><link rel="prefetch" href="/assets/js/105.4f222b90.js"><link rel="prefetch" href="/assets/js/106.ab348ea0.js"><link rel="prefetch" href="/assets/js/107.05f2d3e9.js"><link rel="prefetch" href="/assets/js/108.625e88c6.js"><link rel="prefetch" href="/assets/js/11.9581c9e6.js"><link rel="prefetch" href="/assets/js/12.729bbadb.js"><link rel="prefetch" href="/assets/js/13.2956f066.js"><link rel="prefetch" href="/assets/js/14.5a144bdc.js"><link rel="prefetch" href="/assets/js/15.6aca671f.js"><link rel="prefetch" href="/assets/js/16.f7c2a41f.js"><link rel="prefetch" href="/assets/js/17.126db08a.js"><link rel="prefetch" href="/assets/js/18.a677b8a9.js"><link rel="prefetch" href="/assets/js/19.f5b102c3.js"><link rel="prefetch" href="/assets/js/2.a8c6b452.js"><link rel="prefetch" href="/assets/js/20.d1c31bb2.js"><link rel="prefetch" href="/assets/js/21.2e9564fe.js"><link rel="prefetch" href="/assets/js/22.ed6a6362.js"><link rel="prefetch" href="/assets/js/23.bae633e4.js"><link rel="prefetch" href="/assets/js/24.f437183d.js"><link rel="prefetch" href="/assets/js/25.47f60376.js"><link rel="prefetch" href="/assets/js/26.e81fa223.js"><link rel="prefetch" href="/assets/js/27.03346382.js"><link rel="prefetch" href="/assets/js/28.63524409.js"><link rel="prefetch" href="/assets/js/29.7e0bd54e.js"><link rel="prefetch" href="/assets/js/3.67c92d52.js"><link rel="prefetch" href="/assets/js/30.48ba5cfc.js"><link rel="prefetch" href="/assets/js/31.463cff78.js"><link rel="prefetch" href="/assets/js/32.ac3b0e33.js"><link rel="prefetch" href="/assets/js/33.2bf82de9.js"><link rel="prefetch" href="/assets/js/34.1d5e46f4.js"><link rel="prefetch" href="/assets/js/36.1f2ac89d.js"><link rel="prefetch" href="/assets/js/37.e4c79daf.js"><link rel="prefetch" href="/assets/js/38.8bed7bf9.js"><link rel="prefetch" href="/assets/js/39.98994146.js"><link rel="prefetch" href="/assets/js/4.363b5656.js"><link rel="prefetch" href="/assets/js/40.8eae7677.js"><link rel="prefetch" href="/assets/js/41.3e4168f1.js"><link rel="prefetch" href="/assets/js/42.3ba74ae9.js"><link rel="prefetch" href="/assets/js/43.72599437.js"><link rel="prefetch" href="/assets/js/44.1735c154.js"><link rel="prefetch" href="/assets/js/45.56ae429e.js"><link rel="prefetch" href="/assets/js/46.30933404.js"><link rel="prefetch" href="/assets/js/47.ae580beb.js"><link rel="prefetch" href="/assets/js/48.54830936.js"><link rel="prefetch" href="/assets/js/49.f6e1e1f6.js"><link rel="prefetch" href="/assets/js/5.3420d8f9.js"><link rel="prefetch" href="/assets/js/50.5ba8859a.js"><link rel="prefetch" href="/assets/js/51.8121c744.js"><link rel="prefetch" href="/assets/js/52.c6aed27d.js"><link rel="prefetch" href="/assets/js/53.e21db18d.js"><link rel="prefetch" href="/assets/js/54.138a86f3.js"><link rel="prefetch" href="/assets/js/55.b3aa04b1.js"><link rel="prefetch" href="/assets/js/56.1233748d.js"><link rel="prefetch" href="/assets/js/57.3801320b.js"><link rel="prefetch" href="/assets/js/58.c9e4b28b.js"><link rel="prefetch" href="/assets/js/59.073c9a09.js"><link rel="prefetch" href="/assets/js/6.0fa2c4ad.js"><link rel="prefetch" href="/assets/js/60.3b0710f8.js"><link rel="prefetch" href="/assets/js/61.ab3522ed.js"><link rel="prefetch" href="/assets/js/62.bcbae7e0.js"><link rel="prefetch" href="/assets/js/63.08553e1b.js"><link rel="prefetch" href="/assets/js/64.7b1d1b05.js"><link rel="prefetch" href="/assets/js/65.8ed9d62a.js"><link rel="prefetch" href="/assets/js/66.8edb25f6.js"><link rel="prefetch" href="/assets/js/67.4727fc6f.js"><link rel="prefetch" href="/assets/js/68.0fda644b.js"><link rel="prefetch" href="/assets/js/69.5e10210d.js"><link rel="prefetch" href="/assets/js/7.67571813.js"><link rel="prefetch" href="/assets/js/70.0fba869c.js"><link rel="prefetch" href="/assets/js/71.1b81b5c1.js"><link rel="prefetch" href="/assets/js/72.a3708c9f.js"><link rel="prefetch" href="/assets/js/73.8084709c.js"><link rel="prefetch" href="/assets/js/74.c6b92480.js"><link rel="prefetch" href="/assets/js/75.0aa461a8.js"><link rel="prefetch" href="/assets/js/76.1f78f475.js"><link rel="prefetch" href="/assets/js/77.3bc99dd4.js"><link rel="prefetch" href="/assets/js/78.bf3ce707.js"><link rel="prefetch" href="/assets/js/79.a21f49ee.js"><link rel="prefetch" href="/assets/js/8.5e9abf7f.js"><link rel="prefetch" href="/assets/js/80.ad501796.js"><link rel="prefetch" href="/assets/js/81.2871854f.js"><link rel="prefetch" href="/assets/js/82.e806cc3a.js"><link rel="prefetch" href="/assets/js/83.9927006c.js"><link rel="prefetch" href="/assets/js/84.48c0835e.js"><link rel="prefetch" href="/assets/js/85.4a4874d2.js"><link rel="prefetch" href="/assets/js/86.f79bd6bb.js"><link rel="prefetch" href="/assets/js/87.08bd836f.js"><link rel="prefetch" href="/assets/js/88.61e71e39.js"><link rel="prefetch" href="/assets/js/89.aff17c9d.js"><link rel="prefetch" href="/assets/js/9.a1c180e9.js"><link rel="prefetch" href="/assets/js/90.ea0ad8a7.js"><link rel="prefetch" href="/assets/js/91.300f83b1.js"><link rel="prefetch" href="/assets/js/92.3c9dac39.js"><link rel="prefetch" href="/assets/js/93.7beffc25.js"><link rel="prefetch" href="/assets/js/94.c5443ccd.js"><link rel="prefetch" href="/assets/js/95.92f453b5.js"><link rel="prefetch" href="/assets/js/96.1246dba7.js"><link rel="prefetch" href="/assets/js/97.56da5ba9.js"><link rel="prefetch" href="/assets/js/98.5f2bd081.js"><link rel="prefetch" href="/assets/js/99.26ef7258.js">
+    <link rel="stylesheet" href="/assets/css/styles.4458c4ff.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div><a href="/" class="home-link router-link-active"><!----><span class="site-name">
+      HPE Enterprise Containers
+    </span></a><div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""><!----></div><nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">Home</a></div><div class="nav-item"><a href="/blog/" class="nav-link router-link-active">Blog</a></div><a href="https://github.com/HewlettPackard/Docker-Synergy" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header><div class="sidebar-mask"></div><div class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">Home</a></div><div class="nav-item"><a href="/blog/" class="nav-link router-link-active">Blog</a></div><a href="https://github.com/HewlettPackard/Docker-Synergy" target="_blank" rel="noopener noreferrer" class="repo-link">
+    Contribute!
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav><ul class="sidebar-links"><li><div class="sidebar-group first collapsable"><p class="sidebar-heading open"><span>Introduction</span><span class="arrow down"></span></p><ul class="sidebar-group-items"><li><a href="/introduction-syn.html" class="sidebar-link">Executive Summary</a></li></ul></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Release notes</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Solution overview</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Solution components</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Preparing the environment</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Configuring the core components</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Overview of the playbooks</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Deploying core components</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Post deployment</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Configuring Storage</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Deploying Windows VM workers</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Deploying bare metal workers</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Deploying Sysdig monitoring</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Deploying Splunk</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Deploying Prometheus and Grafana on Kubernetes</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Deploying Prometheus and Grafana on Docker Swarm</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Backup and restore</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Solution lifecycle management</span><span class="arrow right"></span></p><!----></div></li><li><div class="sidebar-group collapsable"><p class="sidebar-heading"><span>Appendices</span><span class="arrow right"></span></p><!----></div></li></ul></div><div class="page"><div class="content"><h1 id="getting-started-with-knative"><a href="#getting-started-with-knative" aria-hidden="true" class="header-anchor">#</a> Getting started with knative</h1><p>This post is based on <a href="https://github.com/knative/docs/blob/master/install/getting-started-knative-app.md" target="_blank" rel="noopener noreferrer">https://github.com/knative/docs/blob/master/install/getting-started-knative-app.md</a></p><p>This post uses the Hello World sample app in Go to demonstrate the basic workflow for deploying an app.</p><h1 id="install-knative"><a href="#install-knative" aria-hidden="true" class="header-anchor">#</a> Install knative</h1><p>Following the instructions at <a href="https://github.com/knative/docs/blob/master/install/Knative-with-any-k8s.md" target="_blank" rel="noopener noreferrer">https://github.com/knative/docs/blob/master/install/Knative-with-any-k8s.md</a></p><h2 id="install-istio"><a href="#install-istio" aria-hidden="true" class="header-anchor">#</a> Install Istio</h2><p>Try to install Istio using the following command:</p><pre class="language-text"><code>kubectl apply --filename https://github.com/knative/serving/releases/download/v0.4.0/istio-crds.yaml &amp;&amp; \
+kubectl apply --filename https://github.com/knative/serving/releases/download/v0.4.0/istio.yaml
+</code></pre><p>You will probably see the error:</p><pre class="language-text"><code>The Service &quot;istio-ingressgateway&quot; is invalid: spec.ports[0].nodePort: Invalid value: 31380: provided port is not in the valid range. The range of valid ports is 32768-35535
+</code></pre><p>You need to download the <a href="https://github.com/knative/serving/releases/download/v0.4.0/istio-crds.yaml" target="_blank" rel="noopener noreferrer">https://github.com/knative/serving/releases/download/v0.4.0/istio-crds.yaml</a> file locally and modify the ports used, to fall within this range:</p><p>Change the <code>nodePort</code> values from 31380, 31390, 31400 to  33380, 33390, 33400:</p><pre class="language-text"><code>...
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+  annotations:
+  labels:
+    chart: gateways-1.0.1
+    release: RELEASE-NAME
+    heritage: Tiller
+    app: istio-ingressgateway
+    istio: ingressgateway
+spec:
+  type: LoadBalancer
+  selector:
+    app: istio-ingressgateway
+    istio: ingressgateway
+  ports:
+    -
+      name: http2
+      nodePort: 31380
+      port: 80
+      targetPort: 80
+    -
+      name: https
+      nodePort: 31390
+      port: 443
+    -
+      name: tcp
+      nodePort: 31400
+      port: 31400
+....
+</code></pre><p>to:</p><pre class="language-text"><code>...
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+  annotations:
+  labels:
+    chart: gateways-1.0.1
+    release: RELEASE-NAME
+    heritage: Tiller
+    app: istio-ingressgateway
+    istio: ingressgateway
+spec:
+  type: LoadBalancer
+  selector:
+    app: istio-ingressgateway
+    istio: ingressgateway
+  ports:
+    -
+      name: http2
+      nodePort: 33380
+      port: 80
+      targetPort: 80
+    -
+      name: https
+      nodePort: 33390
+      port: 443
+    -
+      name: tcp
+      nodePort: 33400
+      port: 31400
+...
+</code></pre><p>Re-apply, using the modified local file:</p><pre class="language-text"><code>kubectl apply --filename istio.yaml
+</code></pre><p>Label the default namespace with <code>istio-injection=enabled</code>:</p><pre class="language-text"><code># kubectl label namespace default istio-injection=enabled
+</code></pre><p>Monitor the Istio components until all of the components show a STATUS of Running or Completed:</p><pre class="language-text"><code># kubectl get pods --namespace istio-system
+</code></pre><h2 id="install-knative-and-dependencies"><a href="#install-knative-and-dependencies" aria-hidden="true" class="header-anchor">#</a> Install knative and dependencies</h2><pre class="language-text"><code>kubectl apply --filename https://github.com/knative/serving/releases/download/v0.4.0/serving.yaml \
+--filename https://github.com/knative/build/releases/download/v0.4.0/build.yaml \
+--filename https://github.com/knative/eventing/releases/download/v0.4.0/release.yaml \
+--filename https://github.com/knative/eventing-sources/releases/download/v0.4.0/release.yaml \
+--filename https://github.com/knative/serving/releases/download/v0.4.0/monitoring.yaml \
+--filename https://raw.githubusercontent.com/knative/serving/v0.4.0/third_party/config/build/clusterrole.yaml
+</code></pre><p>If you see an error such as:</p><pre class="language-text"><code>unable to recognize &quot;https://github.com/knative/eventing/releases/download/v0.4.0/release.yaml&quot;: no matches for kind &quot;ClusterChannelProvisioner&quot; in version &quot;eventing.knative.dev/v1alpha1&quot;
+unable to recognize &quot;https://github.com/knative/eventing/releases/download/v0.4.0/release.yaml&quot;: no matches for kind &quot;ClusterChannelProvisioner&quot; in version &quot;eventing.knative.dev/v1alpha1&quot;
+</code></pre><p>you may be hitting a known issue:</p><pre class="language-text"><code>https://github.com/knative/eventing/issues/680
+
+It fails the first time because the `ClusterChannelProvisioner` CRD hasn't been fully reconciled yet when the in-memory-channel provisioner is created. The second time usually succeeds (because the CRD has been reconciled by then).
+</code></pre><p>Simply re-run the command a second time to re-apply the same files.</p><p>Monitor the Knative components until all of the components show a STATUS of Running:</p><pre class="language-text"><code>kubectl get pods --namespace knative-serving
+kubectl get pods --namespace knative-build
+kubectl get pods --namespace knative-eventing
+kubectl get pods --namespace knative-sources
+kubectl get pods --namespace knative-monitoring
+</code></pre><h1 id="deploying-your-serverless-app"><a href="#deploying-your-serverless-app" aria-hidden="true" class="header-anchor">#</a> Deploying your serverless app</h1><p>To deploy an app using Knative, you need a configuration .yaml file that defines a Service.</p><p>This configuration file specifies metadata about the application, points to the hosted image of the app for deployment, and allows the deployment to be configured.</p><p>Create a new file named <code>service.yaml</code> with the following content:</p><pre class="language-text"><code># cat service.yaml
+
+apiVersion: serving.knative.dev/v1alpha1 # Current version of Knative
+kind: Service
+metadata:
+  name: helloworld-go # The name of the app
+  namespace: default # The namespace the app will use
+spec:
+  runLatest:
+    configuration:
+      revisionTemplate:
+        spec:
+          container:
+            image: gcr.io/knative-samples/helloworld-go # The URL to the image of the app
+            env:
+              - name: TARGET # The environment variable printed out by the sample app
+                value: &quot;Go Sample v1&quot;
+</code></pre><p>From the directory where the new <code>service.yaml</code> file was created, apply the configuration:</p><pre class="language-text"><code># kubectl apply --filename service.yaml
+
+service.serving.knative.dev/helloworld-go created
+</code></pre><p>Now that your service is created, Knative will perform the following steps:</p><ul><li>Create a new immutable revision for this version of the app.</li><li>Perform network programming to create a route, ingress, service, and load balancer for your app.</li><li>Automatically scale your pods up and down based on traffic, including to zero active pods.</li></ul><h1 id="interacting-with-your-app"><a href="#interacting-with-your-app" aria-hidden="true" class="header-anchor">#</a> Interacting with your app</h1><p>To see if your app has been deployed succesfully, you need the host URL and IP address created by Knative.</p><p>Use <code>kubectl get svc</code> to see the details of the service:</p><pre class="language-text"><code>[root@hpe-ansible knative]# kubectl get svc istio-ingressgateway --namespace istio-system
+NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                                                                                                                   AGE
+istio-ingressgateway   LoadBalancer   10.96.72.109   &lt;pending&gt;     80:33380/TCP,443:33390/TCP,31400:33400/TCP,15011:33994/TCP,8060:34944/TCP,853:35094/TCP,15030:33326/TCP,15031:34179/TCP   1h
+</code></pre><p>Patch the type to be <code>NodePort</code>:</p><pre class="language-text"><code># kubectl -n istio-system patch svc istio-ingressgateway --type='json' -p '[{&quot;op&quot;:&quot;replace&quot;,&quot;path&quot;:&quot;/spec/type&quot;,&quot;value&quot;:&quot;NodePort&quot;}]'
+
+service/istio-ingressgateway patched
+</code></pre><p>And patch the port to be, for example, <code>33333</code>:</p><pre class="language-text"><code># kubectl -n istio-system patch svc istio-ingressgateway --type='json' -p '[{&quot;op&quot;: &quot;add&quot;, &quot;path&quot;:&quot;/spec/ports/0/nodePort&quot;, &quot;value&quot;:33333}]'
+
+service/istio-ingressgateway patched
+</code></pre><p>Check that the changes to the service have been made:</p><pre class="language-text"><code># kubectl get svc istio-ingressgateway --namespace istio-system -o yaml
+</code></pre><h1 id="test-service"><a href="#test-service" aria-hidden="true" class="header-anchor">#</a> Test service</h1><p>To find the host URL for your service, enter:</p><pre class="language-text"><code># kubectl get ksvc helloworld-go  --output=custom-columns=NAME:.metadata.name,DOMAIN:.status.domain
+
+NAME                DOMAIN
+helloworld-go       helloworld-go.default.example.com
+</code></pre><p>Simply use <code>curl</code> to test the service, specifing the appropriate port and domain:</p><pre class="language-text"><code># curl -vH &quot;Host: helloworld-go.default.example.com&quot; http://hpe2-ucp01.am2.cloudra.local:33333
+
+Hello Go Sample v1!
+</code></pre><h1 id="teardown"><a href="#teardown" aria-hidden="true" class="header-anchor">#</a> Teardown</h1><p>To remove the sample app from your cluster, delete the service record:</p><pre class="language-text"><code># kubectl delete --filename service.yaml
+</code></pre></div><div class="content edit-link"><a href="https://github.com/HewlettPackard/Docker-Synergy/edit/devel/docs-src/blog/knative-getting-started.md" target="_blank" rel="noopener noreferrer">Help us improve this page!</a><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div><!----></div></div></div>
+    <script src="/assets/js/app.4458c4ff.js" defer></script><script src="/assets/js/35.30905600.js" defer></script>
+  </body>
+</html>
