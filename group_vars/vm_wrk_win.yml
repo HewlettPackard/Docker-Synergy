@@ -4,7 +4,6 @@ disk1_size: '100'
 disk2: 'placeholder'
 disk2_size: '500'
 disk2_part: 'placeholder'
-node_policy: 'dfo-bronze'
 
 networks:
   - name: '{{ vm_portgroup }}'
@@ -24,7 +23,7 @@ disks_specs:
     type: thin
     datastore: "{{ datastores | random }}"
 
-win_vm_template: 'dfo-windows-template'
+win_vm_template: 'hpe-windows-template'
 windows_vdvs_ps: 'https://raw.githubusercontent.com/vmware/vsphere-storage-for-docker/master/install-vdvs.ps1'
 windows_vdvs_path: 'https://vmware.bintray.com/vDVS/vsphere-storage-for-docker_windows'
 windows_vdvs_version: '0.21'
