@@ -12,7 +12,7 @@
 ###
 ---
 - name: Install sysdig
-  hosts: docker
+  hosts: docker:!windows_box
 
   environment: "{{ env }}"
   tasks:
@@ -60,12 +60,7 @@
   connection: local
   gather_facts: false
 
-  vars_files:
-    - ../group_vars/vars
-    - ../group_vars/vault
-
   tasks:
-
 
     - name: Copy sysdig namespace template
       template:
