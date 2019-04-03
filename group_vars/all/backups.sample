@@ -17,6 +17,7 @@ backup_swarm: "/root/restore/backup_swarm.tgz"
 backup_ucp: "/root/restore/backup_ucp.tgz"
 backup_dtr_meta: "/root/restore/backup_dtr_meta.tgz"
 backup_dtr_data: "/root/restore/backup_dtr_data.tgz"
+backup_k8s_pvols: "/root/restore/backup_k8s_pvols.tgz"
 
 #
 # Make sure you specify the correct replica ID of the DTR replica which you are about to restore. You can find this information in 
