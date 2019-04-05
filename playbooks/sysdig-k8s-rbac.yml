@@ -118,6 +118,7 @@
         kubectl apply -f /tmp/sysdig-clusterrolebinding.yml
         # kubectl -n sysdig apply -f /tmp/sysdig-agent-daemonset-v1.yml --validate=false
         kubectl -n sysdig create secret generic sysdig-agent --from-literal=access-key={{ sysdig_access_key }}
+        kubectl -n sysdig apply -f /tmp/sysdig-agent-configmap.yml
         kubectl -n sysdig apply -f /tmp/sysdig-agent-daemonset-v2.yml
       args:
         chdir: ~/certs.{{ ucp_instance }}.{{ ucp_username }}
