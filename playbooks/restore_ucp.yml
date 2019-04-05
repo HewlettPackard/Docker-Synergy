@@ -28,6 +28,10 @@
     UCPUSER: "{{ucp_username}}"
     UCPPASSWORD: "{{ucp_password}}"
     JOINING_IP:  "{{ hostvars[groups.ucp_main[0]]['ip_addr'] | ipaddr('address')}}:2377"
+# Apparently, backup does not save Server Alternative Names so we need to re-create them
+    san_fqdns: "{% for host in groups['ucp'] %}--san {{ host }}.{{ domain_name }} {% endfor %} {% if ucp_lb_fqdn | length > 0 %}--san {{ ucp_lb_fqdn }} {% endif %}"
+    san_ips: "{% for host in groups['ucp'] %} --san {{ hostvars[host].ip_addr | ipaddr('address') }} {% endfor %} {% if ucp_lb_ipv4 | length > 0 %} --san {{ ucp_lb_ipv4 }} {% endif %}"
+    san_all_formatted: "{{ san_fqdns }} {{ san_ips }}"
   
   pre_tasks:
     - include_tasks: includes/find_ucp.yml
