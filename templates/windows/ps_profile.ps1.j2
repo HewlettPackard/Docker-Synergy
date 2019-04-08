@@ -1,0 +1,10 @@
+{% if env.http_proxy is defined %}
+[system.net.webrequest]::defaultwebproxy = new-object system.net.webproxy('{{ env.http_proxy }}')
+[system.net.webrequest]::defaultwebproxy.credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials
+[system.net.webrequest]::defaultwebproxy.BypassProxyOnLocal = $true
+$global:PSDefaultParameterValues = @{
+  'Invoke-RestMethod:Proxy'='{{ env.http_proxy }}'
+  'Invoke-WebRequest:Proxy'='{{ env.http_proxy }}'
+  '*:ProxyUseDefaultCredentials'=$true
+  }
+{% endif %}

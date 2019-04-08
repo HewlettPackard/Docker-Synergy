@@ -1,0 +1,271 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+#######################################################################
+#
+# Play 1: Deploy Linux VMs
+#
+#######################################################################
+- name: Deploy Linux VMs
+  hosts: vms:!vm_wrk_win
+  gather_facts: false
+#  connection: local
+
+  environment:
+    "{{ env }}"
+
+  tasks:
+
+    - name: Create VMs
+      delegate_to: localhost
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        esxi_hostname: "{{ esxi_host }}"
+        datacenter: "{{ datacenter }}"
+        folder: "{{ datacenter }}/vm{{ folder_name }}"
+        name: "{{ inventory_hostname }}"
+        template: "{{ vm_template }}"
+        state: poweredon
+        networks: "{{ networks }}"
+        customization:
+          dns_servers: "{{ dns }}"
+          domain: "{{ domain_name }}"
+        disk: "{{ disks_specs }}"
+        hardware:
+          memory_mb: "{{ ram }}"
+          num_cpus: "{{ cpus }}"
+      notify: CreateVMsWait
+
+  handlers:
+    - name: CreateVMsWait
+      wait_for_connection:
+        delay: 5
+        sleep: 15
+        timeout: 900
+
+
+#######################################################################
+#
+# Play 2: Deploy Windows VM Worker Nodes
+#
+#######################################################################
+- name: Deploy Windows VMs
+  hosts: vm_wrk_win
+  gather_facts: false
+  connection: local
+
+  tasks:
+
+  - name: Create VMs 
+    delegate_to: localhost
+    vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: "{{ vcenter_validate_certs }}"
+      esxi_hostname: "{{ esxi_host }}"
+      datacenter: "{{ datacenter }}"
+      folder: "{{ datacenter }}/vm{{ folder_name }}"
+      name: "{{ inventory_hostname }}"
+      template: "{{ win_vm_template }}"
+      state: poweredon
+      networks: "{{ networks }}"
+      disk: "{{ disks_specs }}"
+      customization:
+        autologon: true
+        autologoncount: 1
+        domain: "{{ domain_name }}"
+        dns_servers: "{{ dns }}"
+        password: "{{ ansible_password }}"
+        timezone: "{{ windows_timezone }}"
+        runonce: 
+        - powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('{{ windows_winrm_script }}'))"
+      hardware:
+        memory_mb: "{{ ram }}"
+        num_cpus: "{{ cpus }}"
+      wait_for_ip_address: yes
+    vars:
+      datastore: "{{ datastores | random }}"
+    notify: CreateVMsWait
+
+
+  handlers:
+    - name: CreateVMsWait
+      delegate_to: localhost
+      wait_for_connection:
+        delay: 120
+        sleep: 15
+        timeout: 900
+
+
+#######################################################################
+#
+# Play 3: Deploy Baremetal Linux Worker Nodes
+#
+#######################################################################
+- name: Deploy Server Profile from Template, selecting the right connection for Management NIC
+  hosts: bms
+  gather_facts: no
+
+  environment:
+    - "{{ env }}"
+
+  tasks:
+
+    - debug: msg="{{ inventory_hostname }} {{ ip_addr }} enc:{{ enclosure }} tpl:{{ ov_template }}"
+
+    - name: Gather facts about the Server Profile Template to retrieve connection information
+      oneview_server_profile_template_facts:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        name: "{{ ov_template }}"
+      delegate_to: localhost
+
+    - fail:
+        msg: "Cannot find Server Profile template {{ ov_template }}. Aborting... " 
+      when: server_profile_templates | length < 1
+
+    - fail:
+        msg: "Server profile Template {{ ov_template }} does not specify an OS Deployment Plan. Aborting..." 
+      when: server_profile_templates[0].osDeploymentSettings.osDeploymentPlanUri is not defined
+
+    - set_fact:
+        SPT_osCustomAttributes: "{{ server_profile_templates[0].osDeploymentSettings.osCustomAttributes | items2dict(key_name='name', value_name='value') }}"
+
+    - name: Find the connection that connects to the ansible network by its name
+      set_fact: connections={{ server_profile_templates.0.connectionSettings.connections | selectattr('name', 'equalto', ov_ansible_connection_name) | list }}
+    - fail:
+        msg: "The connection {{ ov_ansible_connection_name }} could not be found in template {{ ov_template }}" 
+      when: connections | length < 1
+    - set_fact:
+        connection: "{{ connections | first }}" 
+
+    - name: Find the redundant connection that connects to the ansible network by its name
+      set_fact: connections={{ server_profile_templates.0.connectionSettings.connections | selectattr('name', 'equalto', ov_ansible_redundant_connection_name) | list }}
+    - fail:
+        msg: "The connection {{ ov_ansible_redundant_connection_name }} could not be found in template {{ ov_template }}" 
+      when: connections | length < 1
+    - set_fact:
+        connection2: "{{ connections | first }}" 
+
+    - name: Gather facts about a Server Profile by name
+      oneview_server_profile_facts:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        name: "{{ inventory_hostname }}"
+      delegate_to: localhost
+
+    - name: Gather facts about server hardware
+      oneview_server_hardware_facts:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        name: "{{ enclosure }}, bay {{ server_profiles[0].enclosureBay }}"
+      when: server_profiles | length > 0
+      delegate_to: localhost
+
+#
+# Don't try to change the server profile if the server is powered on
+#
+    - set_fact: touch_profile=true
+    - set_fact: touch_profile='{% if server_hardwares[0].powerState != 'Off' %}false{% else %}true{% endif %}'
+      when: server_hardwares is defined and server_hardwares | length > 0
+    - debug: var=touch_profile
+
+    - name : "Provision Server" 
+      delegate_to: localhost
+      when: touch_profile == true
+      oneview_server_profile:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        state: "present"
+        params:
+          force: "{% if force_profile_creation is defined %}True{% else %}False{% endif %}"
+        data:
+          name: "{{ inventory_hostname }}"
+          serverProfileTemplateName: "{{ ov_template }}"
+          serverHardwareName: "{% if bay is defined %}{{ enclosure }}, bay {{ bay }}{% endif %}"
+          osDeploymentSettings:
+            osDeploymentPlanUri: "{{ server_profile_templates[0].osDeploymentSettings.osDeploymentPlanUri }}"
+            osCustomAttributes:
+             - name: NIC1.vlanid
+               value: "{{ SPT_osCustomAttributes['NIC1.vlanid'] }}"
+             - name: NIC1.dhcp
+               value: false
+             - name: NIC1.connectionid
+               value: '{{ connection.id }}'
+             - name: NIC1.networkuri
+               value: '{{ connection.networkUri }}'
+             - name: NIC1.constraint
+               value: 'userspecified'
+             - name: NIC1.ipaddress
+               value: "{{ ip_addr | ipaddr('address') }}"
+             - name: NIC1.netmask
+               value: "{{ SPT_osCustomAttributes['NIC1.netmask'] }}"
+             - name: NIC1.domain
+               value: "{{ SPT_osCustomAttributes['NIC1.domain'] }}"
+             - name: NIC1.gateway
+               value: "{{ SPT_osCustomAttributes['NIC1.gateway'] }}"
+             - name: NIC1.dns1
+               value: "{{ SPT_osCustomAttributes['NIC1.dns1'] }}"
+             - name: NIC1.dns2
+               value: "{{ SPT_osCustomAttributes['NIC1.dns2'] | default(SPT_osCustomAttributes['NIC1.dns1']) }}"
+             - name: NIC2.connectionid
+               value:  '{{ connection2.id }}'
+             - name: NIC2.networkuri
+               value: '{{ connection2.networkUri }}'
+             - name: NIC2.constraint
+               value: 'userspecified'
+
+    - set_fact: server_name="{{ server_hardware.name }}"
+      when: touch_profile == true
+    - set_fact: server_name="{{ server_hardwares[0].name }}"
+      when: touch_profile != true
+
+    - name: Power On the server hardware
+      oneview_server_hardware:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        state: power_state_set
+        data:
+            name : '{{ server_name }}'
+            powerStateData:
+                powerState: "On"
+                powerControl: "MomentaryPress"
+      delegate_to: localhost
+
+    - name: Wait for Connection
+      wait_for_connection:
+        delay: 5
+        sleep: 15
+        timeout: 900
+      register: result
+
+    - debug: var=result
+
+

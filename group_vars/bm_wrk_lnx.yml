@@ -1,0 +1,26 @@
+ov_template: 'RedHat760_fcoe_v1.0.2'               # Name of the OneView Server Profile Template to use for worker nodes
+ov_ansible_connection_name: 'ansibleA'             # Name of the 1st connection in the Server Profile that connects to the ansible network
+ov_ansible_redundant_connection_name: ansibleB     # Name of the 2nd connection in the Server Profile that connects to the ansible network
+
+disk2: '/dev/mapper/mpatha' 
+disk2_part: '/dev/mapper/mpatha1'
+orchestrator: kubernetes # or swarm
+fcoe_devices: ['ens3f2','ens3f3']
+
+
+#
+# Use the following settings when the server profile connections are configured as indicated below
+#
+#    connection 1: deployment network A
+#    connection 2: deployment network B
+#    connection 3: FC1
+#    connection 4: FC2
+#    connection 5: ansibleA
+#    connection 6: ansibleB
+#
+#ov_template: 'RedHat760_v1.0.2'                    # Name of the OneView Server Profile Template to use for worker nodes
+#ov_ansible_connection_name: 'ansibleA'             # Name of the 1st connection in the Server Profile that connects to the ansible network
+#ov_ansible_redundant_connection_name: ansibleB     # Name of the 2nd connection in the Server Profile that connects to the ansible network
+#disk2: '/dev/mapper/mpatha' 
+#disk2_part: '/dev/mapper/mpatha1'
+#fcoe_devices: ['ens3f2','ens3f3']

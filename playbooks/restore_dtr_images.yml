@@ -1,0 +1,72 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+- hosts: local
+  gather_facts: false
+  force_handlers: true
+  become: true
+
+  vars_files:
+    - includes/internal_vars.yml
+
+  environment: 
+    "{{ env }}"
+
+  tasks:
+    - mount:
+        fstype: nfs
+        name: "{{ ivar_nfs_mountpoint }}"
+        src: "{{ ivar_nfs_server }}:{{ images_folder }}"
+        state: mounted
+      notify: unmount NFS Share
+
+    - name: Creates directory
+      file:
+        path: /tmp/scripts
+        state: directory
+
+    - name: Create restore script
+      template:
+        src: ../templates/restore_dtr_images.sh.j2
+        dest: /tmp/scripts/restore_dtr_images.sh
+        mode: 0744
+
+    - name: Do not restore if the directory containing the image data is not empty
+      stat:
+        path: "{{ ivar_nfs_mountpoint }}/docker"
+      register: res
+
+    - fail:
+        msg: "Could not 'stat' {{ images_folder }}/docker, Aborting"
+      when: res.failed != false
+
+    - debug:
+        msg: "Folder {{ images_folder }}/docker is not empty, will not restore data"
+      when: res.stat.exists != false
+
+    - name: restore Data
+      shell: /tmp/scripts/restore_dtr_images.sh
+      register: res
+      when: res.stat.exists == false
+
+  handlers:
+    - name: unmount NFS Share
+      mount:
+        fstype: nfs
+        name: "{{ ivar_nfs_mountpoint }}"
+        src: "{{ ivar_nfs_server }}:{{ images_folder }}"
+        state: unmounted
+      notify: unmount NFS Share

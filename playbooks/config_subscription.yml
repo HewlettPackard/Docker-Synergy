@@ -1,0 +1,42 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+- hosts: linux_box
+  gather_facts: false
+  become_user: root
+  become: true
+
+  environment:
+    - "{{ env }}"
+
+  tasks:
+    - name: Clean Any Subscription Data
+      shell:
+        cmd: subscription-manager clean
+
+    - name: Register system using Red Hat Org ID and Activation Key
+      shell:
+        cmd: subscription-manager register --org="{{rhn_orgid}}" --activationkey="{{rhn_key}}" 
+      when:
+        - rhn_orgid is defined and rhn_orgid != ''
+        - rhn_key is defined and rhn_key != ''
+
+    - name: Register system using Red Hat Username and Password
+      shell:
+        cmd: subscription-manager register --username="{{redhat_user}}" --password="{{redhat_pass}}" --auto-attach
+      when:
+        - redhat_user is defined and redhat_user != ''
+        - redhat_pass is defined and redhat_pass != ''

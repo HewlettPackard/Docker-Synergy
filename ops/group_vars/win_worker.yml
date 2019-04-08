@@ -1,8 +1,0 @@
-ansible_user: '{{ win_username }}'
-ansible_password: '{{ win_password }}'
-ansible_port: 5986
-ansible_connection: winrm
-ansible_winrm_server_cert_validation: ignore
-ansible_winrm_operation_timeout_sec: 250
-ansible_winrm_read_timeout_sec: 300
-windows_timezone: 15

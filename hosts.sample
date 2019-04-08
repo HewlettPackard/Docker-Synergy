@@ -1,0 +1,105 @@
+[ucp_main]
+hpe-ucp01 ip_addr='10.10.174.112/22' esxi_host='esx04.cloudra.local'
+[ucp]
+hpe-ucp01 ip_addr='10.10.174.112/22' esxi_host='esx04.cloudra.local'
+hpe-ucp02 ip_addr='10.10.174.113/22' esxi_host='esx05.cloudra.local'
+hpe-ucp03 ip_addr='10.10.174.114/22' esxi_host='esx06.cloudra.local'
+
+[dtr_main]
+hpe-dtr01 ip_addr='10.10.174.115/22' esxi_host='esx04.cloudra.local'
+[dtr]
+hpe-dtr01 ip_addr='10.10.174.115/22' esxi_host='esx04.cloudra.local'
+hpe-dtr02 ip_addr='10.10.174.116/22' esxi_host='esx05.cloudra.local'
+hpe-dtr03 ip_addr='10.10.174.117/22' esxi_host='esx06.cloudra.local'
+
+[vm_wrk_lnx]
+hpe-worker01 ip_addr='10.10.174.122/22' esxi_host='esx04.cloudra.local' 
+hpe-worker02 ip_addr='10.10.174.123/22' esxi_host='esx05.cloudra.local' orchestrator=swarm
+
+[vm_wrk_win]
+hpe-worker03 ip_addr='10.10.174.124/22' esxi_host='esx06.cloudra.local'  
+
+[bm_wrk_lnx]
+clh-worker04 ip_addr='10.10.174.125/16' enclosure='Rack1-fr1' bay=7 ov_template='RedHat760_fcoe_gen9_1_v1.0.3'
+hpe-worker05 ip_addr='10.10.174.126/16' enclosure='Rack1-fr2' bay=3 ov_template='RedHat760_fcoe_gen10_1_v1.0.3'
+
+[bm_wrk_win]
+hpe-worker06 ip_addr='10.10.174.127/16' enclosure='Rack1-fr3' bay=8 ov_template='Win2016_Gen9_1_v1.0.3'
+
+# legacy load balancers, groups [ucp_lb], [dtr_lb], [worker_lb] and [lbs] must exists even if you don't use them
+[ucp_lb]
+#hpe-ucp ip_addr='10.10.174.118/22' esxi_host='esx06.cloudra.local'
+
+[dtr_lb]
+#hpe-dtr ip_addr='10.10.174.119/22' esxi_host='esx07.cloudra.local'
+
+[worker_lb]
+#hpe-worker ip_addr='10.10.174.120/22' esxi_host='esx05.cloudra.local'
+
+[lbs:children]
+ucp_lb
+dtr_lb
+worker_lb
+
+[loadbalancer]
+hpe-lb1 ip_addr='10.10.174.165/22' esxi_host='esx04.cloudra.local' ucp=true worker=true
+hpe-lb2 ip_addr='10.10.174.166/22' esxi_host='esx05.cloudra.local' dtr=true
+
+[nfs]
+hpe-nfs ip_addr='10.10.174.121/22'    esxi_host='esx04.cloudra.local'
+
+[logger]
+hpe-logger ip_addr='10.10.174.125/22' esxi_host='esx05.cloudra.local'
+
+# Local 
+[local]
+localhost ansible_connection=local
+
+
+#
+# groups
+#
+
+[vms:children]
+ucp
+dtr
+vm_wrk_lnx
+vm_wrk_win
+lbs
+nfs
+logger
+loadbalancer
+
+
+[worker:children]
+vm_wrk_lnx
+vm_wrk_win
+bm_wrk_lnx
+bm_wrk_win
+
+[ctlrplane:children]
+ucp
+dtr
+lbs
+nfs
+loadbalancer
+logger
+
+[bms:children]
+bm_wrk_lnx
+bm_wrk_win
+
+[docker:children]
+ucp
+dtr
+worker
+
+[windows_box:children]
+bm_wrk_win
+vm_wrk_win
+
+[linux_box:children]
+ctlrplane
+vm_wrk_lnx
+bm_wrk_lnx
+

@@ -1,0 +1,17 @@
+---
+docker_ee_url: 'your_url_here'
+vcenter_password: 'xxxx'
+vm_password: 'xxxx'
+simplivity_password: 'xxxx'
+ucp_password: 'zzzz'
+win_password: 'yourpass'
+sysdig_access_key: 'enter_sysdig_access_key'
+rhn_orgid: "YourOrgId"
+rhn_key: "YourActivationKey"
+redhat_user: 'YourUserName'
+redhat_pass: 'YourPassword'
+#password for the splunk universal forwarder. Must meet password complexiy requirement (see splunk donc)
+splunk_uf_password: 'YourPa$$word12'
+oneview_config_password: 'EnterOneViewPa$$word'
+#backup_passphrase must be at least 12 characters long
+backup_passphrase: 'EnterYourSecretpassphrase123'

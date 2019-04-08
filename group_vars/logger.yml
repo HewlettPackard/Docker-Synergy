@@ -1,0 +1,4 @@
+cpus: '2'
+ram: '4096'
+node_policy: 'clh-gold'
+

@@ -1,0 +1,25 @@
+networks:
+  - name:  '{{ vm_portgroup }}'
+    ip:  "{{ ip_addr | ipaddr('address') }}"
+    netmask: "{{ ip_addr | ipaddr('netmask') }}"
+    gateway: "{{ gateway }}"
+
+disks_specs:
+  - size_gb:  '{{ disk1_size }}'
+    type: thin
+    datastore: "{{ datastores | random }}"
+  - size_gb: '{{ disk2_size }}'
+    type: thin
+    datastore: "{{ datastores | random }}"
+  - size_gb: 10
+    type: thin
+    datastore: "{{ datastores | random }}"
+
+disk2: '/dev/sdb'
+disk2_part: '/dev/sdb1'
+
+cpus: '2'
+ram: '4096'
+disk2_size: '500'
+node_policy: 'clh-gold'
+

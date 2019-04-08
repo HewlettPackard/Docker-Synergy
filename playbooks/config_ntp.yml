@@ -1,0 +1,104 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+####################################################################################
+#
+# play 1: Configure NTP on Linux servers
+#
+#####################################################################################
+---
+- name: Configure Network Time on Linux servers
+  hosts: linux_box
+  gather_facts: false
+  become_user: root
+  become: true
+
+  environment:
+    - "{{ env }}"
+
+  tasks:
+
+    - name: Update chrony.conf
+      template:
+        src: ../templates/chrony.conf.j2
+        dest: /etc/chrony.conf
+        owner: root
+        group: root
+        mode: 0644        
+      notify: Enable and restart chrony service
+
+    - name: use timedatectl
+      command: timedatectl set-ntp true
+
+  handlers:
+    - name: Enable and restart chrony service
+      systemd:
+        name: chronyd
+        enabled: yes
+        state: restarted
+
+
+####################################################################################
+#
+# play 2: Configure NTP on Windows Servers
+#
+#####################################################################################
+- name: Configure Network Time on Windows servers
+  hosts: windows_box
+  gather_facts: false
+  connection: local
+  user: remote
+  become: false
+
+  tasks:
+
+    - name: Enable NTP in Windows Registry
+      win_regedit:
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters
+        name: Type
+        data: NTP
+        type: string
+
+    - name: Enable Automatic Time Synchronization in Windows Registry
+      win_regedit:
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\tzautoupdate
+        name: Start
+        data: 4
+        type: dword
+
+    - name: Configure Windows Timezone
+      win_timezone:
+        timezone: "{{ windows_tz }}"
+
+    - name: Ensure Windows Time Service is started
+      win_service:
+        name: w32time
+        state: started
+
+    - name: Configure Windows NTP Peers
+      win_shell: w32tm /config /syncfromflags:manual /manualpeerlist:"{{ ntp_servers | join(' ') }}"
+
+    - name: Restart Windows Time Service
+      win_service:
+        name: w32time
+        state: restarted
+        start_mode: auto
+
+    - name: Update Windows Time Configuration
+      win_shell: w32tm /config /update
+
+    - name: Force re-sync Windows Time
+      win_shell: w32tm /resync /rediscover
+

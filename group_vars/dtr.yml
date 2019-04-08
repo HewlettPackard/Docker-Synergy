@@ -1,0 +1,27 @@
+networks:
+  - name: '{{ vm_portgroup }}'
+    ip:  "{{ ip_addr | ipaddr('address') }}"
+    netmask: "{{ ip_addr | ipaddr('netmask') }}"
+    gateway: "{{ gateway }}"
+
+#  - name: 'dpgISCSI'
+#    ip:  "{{ iscsi_addr | ipaddr('address') }}"
+#    netmask: "{{ iscsi_addr | ipaddr('netmask') }}"
+
+disks_specs:
+  - size_gb: '{{ disk1_size }}'
+    type: thin
+    datastore: "{{ datastores | random }}"
+  - size_gb: '{{ disk2_size }}'
+    type: thin
+    datastore: "{{ datastores | random }}"
+
+disk2: '/dev/sdb' 
+disk2_part: '/dev/sdb1'
+
+cpus: '2'
+ram: '16384'
+disk2_size: '500'
+orchestrator: swarm
+node_policy: 'clh-gold'
+

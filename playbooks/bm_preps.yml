@@ -1,0 +1,53 @@
+###
+# Copyright (2016-2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+###
+---
+- hosts: localhost
+  gather_facts: no
+
+  environment:
+    - "{{ env }}"
+
+  tasks:
+
+    - name: Upload The artifact bundle
+      image_streamer_artifact_bundle:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}" 
+        image_streamer_hostname: "{{ oneview_config_image_streamer_ip }}" 
+        state: present
+        data:
+          localArtifactBundleFilePath: '{{ image_streamer_artifact_bundle }}'
+      delegate_to: localhost
+      register: res
+
+    - set_fact:
+        artifact_bundle_name: "{{ res.ansible_facts.artifact_bundle.name }}"
+
+    - name: Extract the  Artifact Bundle
+      image_streamer_artifact_bundle:
+        hostname: "{{ oneview_config_hostname }}"
+        username: "{{ oneview_config_username }}"
+        password: "{{ oneview_config_password }}"
+        api_version: "{{ oneview_config_api_version }}"
+        image_streamer_hostname: "{{ oneview_config_image_streamer_ip }}" 
+        state: extracted
+        data:
+          name: '{{ artifact_bundle_name }}'
+      delegate_to: localhost
+      register: res
+

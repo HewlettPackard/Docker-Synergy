@@ -1,0 +1,191 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+### 
+---
+####################################################################################
+#
+# play 1: Configure Multipath-IO
+#
+#         Install the Multipath-IO feature and discover both
+#         iSCSI (Image Streamer) and 3PAR providers.
+#
+#####################################################################################
+- name: Install Multipath-IO feature on bare-metal Windows nodes
+  hosts: bm_wrk_win
+  gather_facts: false
+  connection: local
+  user: remote
+  become: false
+
+  tasks:
+
+    - name: Install Multipath-IO feature with sub features and management tools
+      win_feature:
+        name: Multipath-IO
+        state: present
+        include_sub_features: yes
+        include_management_tools: yes
+      register: win_feature
+
+    - name: Reboot if required after installing Multipath-IO feature
+      win_reboot:
+      when: win_feature.reboot_required
+
+    - name: Check if Multipath devices are claimed by MPIO
+      win_shell: mpclaim -e
+      register: mpclaim
+      changed_when: false
+
+    - name: Claim all Multipath devices
+      win_command: mpclaim -n -i -a
+      when: '"NO" in mpclaim.stdout'
+
+    - name: Reboot after claiming Multipath devices
+      win_reboot:
+        post_reboot_delay: 30
+      when: '"NO" in mpclaim.stdout'
+
+
+#####################################################################################
+#
+# play 2: Change drive letter for CD-ROM drives
+#
+#         If the system has a CD-ROM device, it will typically
+#         use the drive letter 'D' which we want to use for
+#         our dedicated Docker storage device.  Change the
+#         CD-ROM drive letter to 'T' to free up the 'D' drive.
+#
+#####################################################################################
+- name: Move CD-ROM drive letter (Windows)
+  hosts: windows_box
+  gather_facts: true
+  connection: local
+  user: remote
+  become: false
+
+  tasks:
+
+    - name: Change Drive Letter of CD-ROM Device on Gen9 or VMware Systems
+      win_shell: |
+        $cdrom = Get-WmiObject -Class win32_volume -Filter "DriveType = '5'"
+        if ( $cdrom )
+        {
+           Set-WmiInstance -input $cdrom -Arguments @{DriveLetter="T:"}
+           "changed: true"
+        } else {
+           "changed: false"
+        }
+      when: (ansible_product_name is search("Gen9")) or (ansible_product_name is search("VMware"))
+      register: res
+      changed_when: '"changed: true" in res.stdout_lines'
+
+    - name: Change Drive Letter of CD-ROM Device on Gen10 Systems
+      win_shell: |
+        $cdrom = Get-WmiObject -Class win32_volume -Filter "DriveType = '2'"
+        if ( $cdrom )
+        {
+           Set-WmiInstance -input $cdrom -Arguments @{DriveLetter="T:"}
+           "changed: true"
+        } else {
+           "changed: false"
+        }
+      when: ansible_product_name is search("Gen10")
+      register: res
+      changed_when: '"changed: true" in res.stdout_lines'
+
+#####################################################################################
+#
+# play 3: Initialize data disk on Windows
+#
+#         Query the available disks for any un-initialized (RAW) disks,
+#         select the first RAW disk, initialize it, partition it,
+#         format it with NTFS, assign an available drive letter, and
+#         give it the label "DockerVol".
+#
+#####################################################################################
+- name: Initialize Data Disk for Dockers (Windows)
+  hosts: windows_box
+  gather_facts: false
+  connection: local
+  user: remote
+  become: false
+
+  tasks:
+
+    - name: Initialize Disk Device for Docker
+      win_shell: | 
+        $raw_disk = (Get-Disk | Where-Object PartitionStyle -eq 'RAW' | Select-Object -First 1)
+        if ( $raw_disk )
+        {
+           Initialize-Disk -InputObject $raw_disk -PartitionStyle GPT -PassThru | 
+           New-Partition -DriveLetter "{{ windows_docker_drive }}" -UseMaximumSize | 
+           Format-Volume -FileSystem NTFS -NewFileSystemLabel "{{ windows_docker_volume_label }}" -Confirm:$False
+           "changed: true"
+        } else {
+           "changed: false"
+        }
+      register: res
+      changed_when: '"changed: true" in res.stdout_lines'
+
+
+####################################################################################
+#
+# play 4: Configure Windows Pagefile
+#
+#         Relocate the Windows pagefile from the Image Streamer thin-volume to the 
+#         SCSI/RAID volume.  Remove any existing pagefiles, enable Automatic 
+#         pagefile management and reboot system to implement new pagefile settings.
+#
+#         This only needs to be done on bare-metal Windows worker nodes.
+#
+#####################################################################################
+
+    - block:
+
+      # Currently there is a defect in win_pagefile not returning the list of
+      # configured pagefiles.  Until it is fixed, use the wmic command to query.
+      #- name: List any configured pagefiles
+      #  win_pagefile:
+      #    drive: "{{ windows_docker_drive }}"
+
+      - name: Discover any current pagefiles
+        win_command: wmic pagefile list /format:list
+        register: wmic
+        changed_when: false
+  
+      - name: Remove pagefile from C drive
+        win_pagefile:
+          automatic: no
+          drive: C
+          state: absent
+        when: 
+          - '"Name=C:\pagefile.sys" in wmic.stdout_lines'
+
+      - name: Create pagefile on D drive 
+        win_pagefile:
+          automatic: no
+          drive: D
+          state: present
+        when: 
+          - '"Name=D:\pagefile.sys" not in wmic.stdout_lines'
+
+      - name: Reboot Windows system after pagefile re-configuration
+        win_reboot:
+          post_reboot_delay: 30
+        when: 
+          - '"Name=C:\pagefile.sys" in wmic.stdout_lines'
+
+      when:
+        - inventory_hostname in groups.bm_wrk_win

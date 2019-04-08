@@ -1,0 +1,129 @@
+###
+# Copyright (2017) Hewlett Packard Enterprise Development LP
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# You may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+###
+---
+- name: Backup Kubernetes Persistent Volumes
+  hosts: localhost
+  gather_facts: false
+  force_handlers: true
+  become: true
+
+  vars_files:
+    - includes/internal_vars.yml
+
+  environment:
+    "{{ env }}"
+
+  tasks:
+
+    - name: Mount the NFS Share
+      mount:
+        fstype: nfs
+        src: "{{ ivar_nfs_server }}:{{ nfs_provisioner_server_share }}"
+        path: "{{ ivar_nfs_mountpoint }}"
+        opts: "{{ nfs_mount_options }}"
+        state: mounted
+      notify:  unmount the NFS Share
+#
+# Find a UCP endpoint and fail the playbook is none is found
+#
+    - include_tasks: includes/find_ucp.yml
+      vars:
+        ping_servers: "{{ groups.ucp }}"
+    - debug: var=ucp_instance
+      when: _debug is defined
+    - fail: 
+      when: ucp_instance == ".none." 
+#
+# Retrieve the version of UCP
+#
+    - include_tasks: includes/get_ucp_version.yml
+    - debug: msg="ucp_version {{ ucp_version }}, detected version {{ detected_ucp_version }}"
+      when: _debug is defined
+
+#
+# Get a timestamp, will be used to name the backup
+#
+    - name: Get TimeStamp
+      command: date -u '+%Y_%m_%d_%H%M%S'
+      register: timestamp
+    - name: Store the timestamp
+      set_fact:
+        timestamp: "{{ timestamp.stdout }}"
+
+#
+# collect some metadata from a UCP node
+#
+
+    - set_fact:
+        backup_name:   "backup_pvols_{{ timestamp }}"
+      when: backup_name is undefined
+
+    - debug: var=backup_name
+      
+#
+# Create backup script and run it
+#
+    - name: Creates directory
+      file:
+        path: /tmp/scripts
+        state: directory
+
+    - name: Copy backup script 
+      template:
+        src: ../templates/backup_k8s_pvols.sh.j2
+        dest: /tmp/scripts/backup_k8s_pvols.sh
+        mode: 0744
+
+    - name: Backup the Persistent Volumes
+      shell: /tmp/scripts/backup_k8s_pvols.sh {{ backup_name }}
+      register: res
+
+#
+# Backup some metedata
+#
+    - name: Create a temporary directory to receive files that contains backup metadata
+      tempfile:
+        state: directory
+        suffix: temp
+      register: res
+
+    - template:
+        src: ../templates/backup_meta.yml.j2
+        dest: "{{ res.path }}/meta.yml"
+
+    - copy:
+         src: "{{ item }}"
+         dest: "{{ res.path }}/"
+      with_items:
+        - ../hosts
+        - ../group_vars
+
+    - name: Save the backup Metadata as well
+      archive:
+        path:
+          - "{{ res.path }}/"
+        dest: "{{ backup_dest }}/{{ backup_name }}.vars.tgz"
+
+  handlers:
+    - name: unmount the NFS Share
+      mount:
+        fstype: nfs
+        src: "{{ ivar_nfs_server }}:{{ nfs_provisioner_server_share }}"
+        path: "{{ ivar_nfs_mountpoint }}"
+        opts: "{{ nfs_mount_options }}"
+        state: unmounted
+
+
