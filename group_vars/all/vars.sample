@@ -43,7 +43,7 @@ ntp_servers: ['10.60.1.123','0.us.pool.net.org','1.us.pool.net.org']
 # Docker configuration
 #docker_ee_url: is defined in group_vars/vault, should be kept secret
 docker_ee_reponame: 'stable-18.09'
-#docker_ee_version: 'docker-ee-18.09.0-3.el7.x86_64'
+docker_ee_version: 'docker-ee-18.09.3-3.el7.x86_64'
 rhel_version: '7'
 dtr_version: '2.6.3'
 ucp_version: '3.1.4'

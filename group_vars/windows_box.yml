@@ -13,7 +13,7 @@ windows_update: false
 windows_docker_drive: 'D'
 windows_docker_directory: 'D:\\DockerData'
 windows_docker_volume_label: 'DockerVol'
-docker_ee_version_windows: '18.09'
+docker_ee_version_windows: '18.09.3'
 
 #
 # Timezone value used by Ansible win_timezone module requires string value
