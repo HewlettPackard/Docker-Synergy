@@ -36,11 +36,13 @@ You need to make this script available locally:
 2.  Deploy a local HTTP server, enabling port 80, for example:
 
     ```
-    yum install httpd
+    firewall-cmd --permanent --add-port 80/tcp --zone=public
+    firewall-cmd --permanent --change-interface=ens192 --zone=public
+    firewall-cmd --reload
+
+    dnf install httpd
     systemctl enable httpd
     systemctl start httpd
-    firewall-cmd --permanent --add-port 80/tcp --zone=public
-    firewall-cmd --reload
     ```
 
 3.  Copy the downloaded script to the web server:
