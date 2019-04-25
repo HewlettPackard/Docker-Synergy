@@ -24,7 +24,7 @@
     - ./includes/internal_vars.yml
 
   environment:
-    - "{{ env }}"
+    "{{ env }}"
 
   tasks:
 
@@ -81,19 +81,6 @@
       args:
         chdir: ~/certs.{{ ucp_username }}
         executable: /usr/bin/bash
-
-    - name: Grant the splunk service account with the role "View Only"
-      uri:
-        url: "https://{{ ucp_instance }}.{{ domain_name }}/collectionGrants/system%3Aserviceaccount%3Adefault%3Asplunk/kubernetesnamespaces/viewonly?type=grantobject"
-        headers:
-          Content-Type: application/json
-          Authorization: Bearer {{ auth_token }}
-        method: PUT
-        status_code: 201
-        body_format: json
-        validate_certs: no
-        use_proxy: no
-      register: roles
 
     - name: Copy K8S resource file (ta-k8s-meta and ta-k8s-logs)
       template:
