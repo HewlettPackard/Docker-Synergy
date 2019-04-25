@@ -13,7 +13,7 @@
     ```
 
 
-**Note:** All subsequent file names are relative to the `Docker-Synergy` directory. For example `hosts` is located in the top-level `~/Docker-Synergy` while `group_vars/all/vars` corresponds to `~/Docker-Synergy/groups_vars/all/vars`.
+**Note:** All subsequent file names are relative to the `Docker-Synergy` directory. For example `hosts` is located in the top-level `~/Docker-Synergy` while `group_vars/all/vars` corresponds to `~/Docker-Synergy/group_vars/all/vars`.
 
 You now need to prepare the configuration to match your own environment, prior to deploying Docker EE and the rest of the nodes. To do so, you will need to modify a number of files including:
 
