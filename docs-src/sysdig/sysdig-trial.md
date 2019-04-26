@@ -1,6 +1,6 @@
 # Registering for Sysdig trial
 
-Hewlett Packard Enterprise has teamed up with Sysdig to offer a fully featured 90-day trial version of Sysdig Monitor and Secure as part of the HPE Enterprise Containers as a Service with Docker EE on HPE Synergy. For more details on how to sign up, see the GitHub repository at [https://github.com/HewlettPackard/Docker-Synergy](https://github.com/HewlettPackard/Docker-Synergy).
+Hewlett Packard Enterprise has teamed up with Sysdig to offer a fully featured 90-day trial version of Sysdig Monitor and Secure as part of the HPE Enterprise Containers as a Service with Docker EE on HPE Synergy. 
 
 Browse to the registration page at [https://sysdig.com/partner-hpe/](https://sysdig.com/partner-hpe/) as shown in Figure 4.
 

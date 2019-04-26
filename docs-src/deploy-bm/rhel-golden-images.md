@@ -19,10 +19,10 @@ host. At a high level, these steps can be described as:
 ## Download the artifacts for HPE Synergy Image Streamer
 
 Red Hat Enterprise Linux bundles for HPE Image Streamer may be downloaded from 
-[https://github.com/HewlettPackard/image-streamerrhel/tree/V4.1/artifact-bundles/](https://github.com/HewlettPackard/image-streamerrhel/tree/V4.1/artifact-bundles/).
+[https://github.com/HewlettPackard/image-streamer-rhel/tree/V4.1/artifact-bundles/](https://github.com/HewlettPackard/image-streamer-rhel/tree/V4.1/artifact-bundles/).
 
 Sample foundation artifact bundles should be downloaded from
-[https://github.com/HewlettPackard/imagestreamer-tools/tree/v4.0/foundation/artifact-bundles](https://github.com/HewlettPackard/imagestreamer-tools/tree/v4.0/foundation/artifact-bundles). 
+[https://github.com/HewlettPackard/image-streamer-tools/tree/v4.0/foundation/artifact-bundles](https://github.com/HewlettPackard/image-streamer-tools/tree/v4.0/foundation/artifact-bundles). 
 
 
 
