@@ -282,7 +282,11 @@
       when: _debug is defined
 
     - name: Test Docker Installation
+<<<<<<< HEAD
+      win_shell: docker container run hello-world:nanoserver-sac2016
+=======
       win_shell: docker container run hello-world:nanoserver
+>>>>>>> master
       register: docker_cmd
 
     - name: Fail Playbook if Docker Test Fails

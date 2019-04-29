@@ -15,6 +15,52 @@
 #    requests:
 #      storage: 500Mi
 
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: splunk 
+rules:
+- apiGroups: ["", "apps","batch","extensions"]
+  resources:
+  - cronjobs
+  - componentstatuses
+  - configmaps
+  - controllerrevisions
+  - daemonsets
+  - deployments
+  - jobs
+  - replicasets
+  - replicationcontrollers
+  - resourcequotas
+  - scheduledjobs
+  - statefulsets
+  - namespaces
+  - nodes
+  - services
+  - secrets
+  - serviceaccounts
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: splunk
+  name: splunk
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: splunk
+subjects:
+  - kind: ServiceAccount
+    name: splunk
+    namespace: default
 
 ---
 apiVersion: extensions/v1beta1
