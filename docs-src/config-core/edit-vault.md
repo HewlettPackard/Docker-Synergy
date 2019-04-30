@@ -17,7 +17,7 @@ rhn_orgid: "YourOrgId"
 rhn_key: "YourActivationKey"
 redhat_user: 'YourUserName'
 redhat_pass: 'YourPassword'
-#password for the splunk universal forwarder. Must meet password complexiy requirement (see splunk donc)
+#password for the splunk universal forwarder. Must meet password complexiy requirement (see splunk documentation)
 splunk_uf_password: 'YourPa$$word12'
 oneview_config_password: 'EnterOneViewPa$$word'
 #backup_passphrase must be at least 12 characters long

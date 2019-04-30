@@ -25,7 +25,7 @@ Window-related variables are shown in Table 15. Variables for all Windows nodes 
 The playbooks for deploying Windows workers rely on a Powershell script for remote access from the Ansible machine. The script `ConfigureRemotingForAnsible.ps1` is available online on GitHub
 at https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1. 
 
-You need to make this script available locally:
+You need to make this script available locally on the Fedora 29 Ansible controller:
 
 1.  Download the script:
 
@@ -51,10 +51,10 @@ You need to make this script available locally:
     cp ConfigureRemotingForAnsible.ps1 /var/www/html
     ```
 
-4.  Configure the variable to point at the local web server, for example,
+4.  Configure the variable to point at the local web server, using the name or the IP address of the Ansible controller, for example,
 
     ```
-    windows_winrm_script: 'http://10.10.174.230/ConfigureRemotingForAnsible.ps1'
+    windows_winrm_script: 'http://10.60.59.230/ConfigureRemotingForAnsible.ps1'
     ```
 
 

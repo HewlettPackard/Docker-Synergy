@@ -46,7 +46,7 @@ The generated files won't have `<vmname>` or `<timestamp>` appended:
 <backup_dest>/my_swarm_backup.vars.tgz
 ```
 
-**Warning: Online versus offline backups:** By default, the playbook performs online backups. You can take offline backups by setting the variable `swarm_backup_offline` to `"true"`. The playbook will then stop the Docker daemon on the machine used to take the backup (a manager or UCP node). Before it does so, the playbook will verify that enough managers are running in the cluster to maintain the quorum. If this is not the case, the playbook will exit with an error. For more information, see the Docker documentation at [https://docs.docker.com/engine/swarm/admin_guide/\#recover-from-disasterv](https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disasterv)
+**Warning: Online versus offline backups:** By default, the playbook performs online backups. You can take offline backups by setting the variable `swarm_backup_offline` to `"true"`. The playbook will then stop the Docker daemon on the machine used to take the backup (a manager or UCP node). Before it does so, the playbook will verify that enough managers are running in the cluster to maintain the quorum. If this is not the case, the playbook will exit with an error. For more information, see the Docker documentation at [https://docs.docker.com/engine/swarm/admin_guide/\#recover-from-disaster](https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster)
 
 ## Backing up the Universal Control Plane (UCP)
 
@@ -203,9 +203,9 @@ The script `backup.sh` can be used to take a backup of the swarm, UCP, DTR metad
 
 |Example|Command line|Generated filenames|
 |:------|:-----------|:------------------|
-|Default|`./backup.sh`|backup_swarm_<vmname\>_<timestamp\>.tgz, backup_ucp_<ucpid\>_<vmname\>_<timestamp\>.tgz, backup_dtr_meta_<replica_id\>_<vmname\>_<timestamp\>.tgz, backup_dtr_data_<replica_id\>_<vmname\>_<timestamp\>.tgz and the corresponding `.vars.tgz` files|
-|Custom|`./backup.sh my_backup`|my_backup_swarm.tgz, my_backup_ucp.tgz, my_backup_dtr_meta.tgz, my_backup_dtr_data.tgz, and the corresponding `.vars.tgz` files|
-|Date|`./backup.sh $(date '+%Y_%m_%d_%H%M%S')`|<date\>_swarm.tgz, <date\>_ucp.tgz, <date\>_dtr_meta.tgz, <date\>_dtr_data.tgz, and the corresponding `.vars.tgz` files|
+|Default|`./backup.sh`|`backup_swarm_<vmname>_<timestamp>.tgz`, `backup_ucp_<ucpid>_<vmname>_<timestamp>.tgz`, `backup_dtr_meta_<replica_id>_<vmname>_<timestamp>.tgz`, `backup_dtr_data_<replica_id>_<vmname>_<timestamp>.tgz` and the corresponding `.vars.tgz` files|
+|Custom|`./backup.sh my_backup`|`my_backup_swarm.tgz`, `my_backup_ucp.tgz`, `my_backup_dtr_meta.tgz`, `my_backup_dtr_data.tgz`, and the corresponding `.vars.tgz` files|
+|Date|`./backup.sh $(date '+%Y_%m_%d_%H%M%S')`|`<date>_swarm.tgz`, `<date>_ucp.tgz`, `<date>_dtr_meta.tgz`, `<date>_dtr_data.tgz`, and the corresponding `.vars.tgz` files|
 
 In addition, the `backup.sh` script accepts an optional switch that will let you specify the location of the password file that will be passed to the `ansible-playbook` commands in the script. This is required if you have encrypted the `group_vars/all/vault` file. The general syntax for this script is as follows:
 

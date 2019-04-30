@@ -30,4 +30,4 @@ Variables related to the configuration of Kubernetes Persistent Volumes are show
 
 ### Related playbooks
 
--   `playbooks/nfs-provisioner.yml` is used to enable a dynamic NFS provisioner which can be used to automatically create and allocate Kubernetes persistent volumes. The backend storage is provided by an NFS backend. This playbook is run from the Ansible box after configuring `kubectl` and a UCP client bundle for the `admin` account. For more information on using this playbook, see the section `Deploying the NFS provisioner for Kubernetes`.
+-   `playbooks/nfs-provisioner.yml` is used to enable a dynamic NFS provisioner which can be used to automatically create and allocate Kubernetes persistent volumes. This playbook is run from the Ansible box after configuring `kubectl` and a UCP client bundle for the `admin` account. For more information on using this playbook, see the section `Configuring storage`.

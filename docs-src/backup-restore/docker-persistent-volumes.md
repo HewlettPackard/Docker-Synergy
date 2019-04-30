@@ -62,7 +62,7 @@ vSphere cluster. This backup datastore is used for storing copies of Docker pers
 well as backups of DTR and UCP.
 
 2.	The Ansible server is used to create backup and restore files for DTR and UCP on the local hard drive. 
-The backup files should be copied to the DockerBackup datastore which can be automatically configured 
+The backup files should be copied to the DockerBackups datastore which can be automatically configured 
 for snapshots and offsite backup.
 
 3.	Edit the Ansible server configuration from vCenter. Add a new hard disk and specify the location 
@@ -96,7 +96,7 @@ as the Docker Backup datastore as shown in the following figure.
 
 8. After saving the change, mount the new volume using:
 ```
-#mount -a
+# mount -a
 ```
 
 Each time you backup Docker UCP and DTR using the `backup.sh` script, you should copy the generated files from the `/root/backups` folder to `/dockerbackup`. You may wish to add a command to the backup script to automate this process.

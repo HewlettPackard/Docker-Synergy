@@ -1,6 +1,6 @@
 # Create the Red Hat Linux template
 
-To create the Red Hat Linux VM template that you will use as the base for all your nodes, you first create a Virtual Machine with the OS installed and then convert the Virtual Machine to a VM Template. The VM Template is created as lean as possible, with any additional software installs and/or system configuration performed subsequently using Ansible.
+To create the Red Hat Linux template that you will use as the base for all your VM nodes, you first create a Virtual Machine with the OS installed and then convert the Virtual Machine to a VM Template. The VM Template is created as lean as possible, with any additional software installs and/or system configuration performed subsequently using Ansible.
 
 As the creation of the template is a one-off task, this procedure has not been automated. The steps required to manually create a VM template are outlined below.
 
@@ -33,7 +33,7 @@ Use `yum update` to install the latest packages, configuring a proxy if required
 --enable=rhel-7-server-rpms \
 --enable=rhel-7-server-extras-rpms
 
-# yum update
+# yum -y update
 
 # subscription-manager unregister
 ```

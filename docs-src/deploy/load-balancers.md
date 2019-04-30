@@ -5,21 +5,18 @@ The playbook `playbooks/loadbalancer.yml` is used to deploy load balancers in an
 At least two nodes are specified in the `[loadbalancer]` group in the inventory, along with group variables defining CPU and RAM requirements. These nodes run `keepalived` and `HAproxy`.
 
 ```
-
 [loadbalancer]
-hpe-lb1 ip_addr='10.10.174.248/22' esxi_host='simply04.am2.cloudra.local' ucp=true
-hpe-lb2 ip_addr='10.10.174.249/22' esxi_host='simply05.am2.cloudra.local' dtr=true
+hpe-lb1 ip_addr='10.60.59.248/22' esxi_host='simply04.am2.cloudra.local' ucp=true
+hpe-lb2 ip_addr='10.60.59.249/22' esxi_host='simply05.am2.cloudra.local' dtr=true
 
 [loadbalancer:vars]
 cpus='2'
 ram='4096'
-node_policy='hpe-bronze'
-
 ```
 
-The virtual IP for UCP will be handled by `hpe-lb1` by default, which will split the traffic across the three UCP VMs `hpe-ucp01`, `hpe-ucp02` and `hpe-ucp03`. In the case of a failure of `hpe-lb1`, the virtual IP for UCP will automatically move to the second load balancer node `hpe-lb2` which will again distribute the traffic to the UCP VMs.
+The virtual IP for UCP will be handled by `hpe-lb1` by default, which will split the traffic across the three UCP VMs. In the case of a failure of `hpe-lb1`, the virtual IP for UCP will automatically move to the second load balancer node `hpe-lb2` which will again distribute the traffic to the UCP VMs.
 
-Similarly, the virtual IP for DTR will be handled by default by the load balancer `hpe-lb2`, splitting the traffic across the three DTR VMs `hpe-dtr01`, `hpe-dtr02` and `hpe-dtr03`. In the case of a failure of `hpe-lb2`, the virtual IP for DTR will automatically move to the first load balancer node `hpe-lb1` which will again distribute the traffic to the DTR VMs.
+Similarly, the virtual IP for DTR will be handled by default by the load balancer `hpe-lb2`, splitting the traffic across the three DTR VMs. In the case of a failure of `hpe-lb2`, the virtual IP for DTR will automatically move to the first load balancer node `hpe-lb1` which will again distribute the traffic to the DTR VMs.
 
 To configure the virtual IPs for UCP and DTR, you need to add a `loadbalancers` dictionary to your `group_vars/all/vars` file as shown in the excerpt below:
 

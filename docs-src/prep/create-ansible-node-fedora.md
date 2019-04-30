@@ -9,7 +9,7 @@ In this release of the Docker Synergy solution, it is required to deploy your An
 
 Create a Virtual Machine with the following characteristics:
 
-- **Guest OS:** Red Hat Fedora (64-bit)
+- **Guest OS:** Red Hat Fedora Server 29 (64-bit)
 - **Disk:** 50G (thin provisioning)
 - **CPU:** 2
 - **RAM:** 4 GB
@@ -34,13 +34,7 @@ Login the root account and run the following commands:
 
 ```
 dnf update -y
-dnf install -y git
-dnf install -y ansible
-dnf install -y python3-netaddr
-dnf install -y python3-requests
-dnf install -y python3-pyvmomi
-dnf install -y python3-pip
-dnf install -y python3-winrm
+dnf install -y git ansible python3-netaddr python3-requests python3-pyvmomi python3-pip python3-winrm
  
 cd /usr/bin
 ln -s python3.7 python
@@ -53,11 +47,11 @@ cd python-hpOneView/
 pip3 install .
 
  
-# Install the ONeview Ansible Modules
+# Install the Oneview Ansible Modules
 cd
 git clone https://github.com/HewlettPackard/oneview-ansible.git
  
-# Configure ansible
+# Configure Ansible
 cat <<EOF >>~/.bashrc
 export ANSIBLE_LIBRARY=/root/oneview-ansible/library
 export ANSIBLE_MODULE_UTILS=/root/oneview-ansible/library/module_utils

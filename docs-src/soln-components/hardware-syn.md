@@ -23,13 +23,12 @@ HPE Synergy Frames contain a management appliance called the HPE Synergy Compose
 - Unified API access, which enables simple line-of-code programming of every infrastructure element; easily automates IT operational processes; and effortlessly automates applications through infrastructure deployment.
 
 ## Server requirements
-The minimum platform requirement for this configuration, shown in Figure 2, is a 3 node HPE Synergy 480 Gen10 deployment with 1 node in each Synergy frame and
+The minimum platform requirement for this configuration, shown in Figure 2, is a 3 node HPE Synergy 480 Gen10 deployment. There is a single ESXi cluster with both the control plane and the Docker workers spread out on all three nodes. A single node in each Synergy frame has the following suggested requirements:
 
 - 384 GB DDR4-2133 RAM
 - 2 Intel® Xeon® CPU Gold 6130 2.10GHz x 16 core
-- Single ESXi cluster with the control plane and the Docker workers spread out on all 3 nodes
 
-The solution has also been tested on a 6 node HPE Synergy environment, with 2 nodes in each frame. In this setup, the extra 3 nodes are dedicated to Docker worker nodes. The 6 node deployment is depicted graphically in Figure 3 with the following suggested requirements for each node.
+The solution has also been tested on a 6 node HPE Synergy environment, with 2 nodes in each frame. In this setup, there is a single ESXi cluster with the control plane on 3 nodes while the extra 3 nodes are dedicated exclusively to Docker worker nodes. The 6 node deployment is depicted graphically in Figure 3 with the following suggested requirements for each node:
 
 - 128 GB DDR4-2133 RAM
 - 2 Intel® Xeon® CPU Gold 6130 2.10GHz x 16 core
@@ -42,7 +41,7 @@ An HPE 3PAR array is required for ESXi datastore. This solution makes use of an 
 - 8x 480GB SSD for the vSphere cluster datastore
 - 8x 1.8TB HDD for the backup datastore
 
-You should create a large virtual volume on the HPE 3PAR StoreServ to host the virtual machines and another large virtual volume for Docker backups. Create datastores on your vSphere cluster using these virtual volumes. If desired, you can create separate HPE 3PAR StoreServ virtual volumes and attach them to all vSphere cluster hosts for backing up Docker persistent volumes. It is recommended that you configure the volumes that are used for virtual machine deployments on the SSD. Storage for backups can be configured on the HDDs.
+You should create a large virtual volume on the HPE 3PAR StoreServ to host the virtual machines and another large virtual volume for Docker backups. Create datastores on your vSphere cluster using these virtual volumes. If desired, you can create separate HPE 3PAR StoreServ virtual volumes and attach them to all vSphere cluster hosts for backing up Docker persistent volumes. It is recommended that you configure the volumes that are used for virtual machine deployments on the SSDs. Storage for backups can be configured on the HDDs.
 
 Table 5 provides an overview of how the storage requirements for various components are addressed in this solution.
 

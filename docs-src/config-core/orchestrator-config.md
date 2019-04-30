@@ -21,9 +21,9 @@ In the `hosts` file:
 
 ```
 [vm_wrk_lnx]
-hpe-worker01 ip_addr='10.10.174.122/22' esxi_host='esx04.cloudra.local' 
-hpe-worker02 ip_addr='10.10.174.123/22' esxi_host='esx05.cloudra.local' 
-hpe-worker03 ip_addr='10.10.174.124/22' esxi_host='esx06.cloudra.local' orchestrator=swarm
+hpe-worker01 ip_addr='10.60.59.122/22' esxi_host='esx04.cloudra.local' 
+hpe-worker02 ip_addr='10.60.59.123/22' esxi_host='esx05.cloudra.local' 
+hpe-worker03 ip_addr='10.60.59.124/22' esxi_host='esx06.cloudra.local' orchestrator=swarm
 ```
 
 

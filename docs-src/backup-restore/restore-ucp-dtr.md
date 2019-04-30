@@ -28,7 +28,7 @@ backup_node="hpe-dtr01"
 replica_id="ad5204e8a4d0"
 backup_source=""
 ucp_version=""
-dtr_version="2.4.3"
+dtr_version="2.5.3"
 
 ```
 
@@ -41,7 +41,7 @@ ucp_version="2.2.7"
 dtr_version=""
 ```
 
-Take note of the replica ID (`ad5204e8a4d0`), the version of DTR (`2.4.3`) and the version of UCP (`2.2.7`).
+Take note of the replica ID (`ad5204e8a4d0`), the version of DTR (in this particular example, `2.5.3`) and the version of UCP (in this particular example,`2.2.7`).
 
 **Step 3:** Populate the `group_vars/all/backups` file
 
@@ -63,7 +63,7 @@ The playbooks use the versions of UCP and DTR as specified in your `group_vars/a
 
 ```
 # cat group_vars/all/vars | grep dtr_version
-dtr_version: '2.4.3'
+dtr_version: '2.5.3'
 ```
 
 ```

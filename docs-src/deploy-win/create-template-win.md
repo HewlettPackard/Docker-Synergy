@@ -1,6 +1,6 @@
 # Create the Windows VM Template
 
-To create the Windows VM Template that you will use as the base for all your Windows worker nodes, you will first create a Virtual Machine with the OS installed and then convert the Virtual Machine to a VM Template. The VM Template is created as lean as possible, with any additional software installs and/or system configuration performed subsequently using Ansible.
+To create the Windows Template that you will use as the base for all your Windows VM worker nodes, you will first create a Virtual Machine with the OS installed and then convert the Virtual Machine to a VM Template. The VM Template is created as lean as possible, with any additional software installs and/or system configuration performed subsequently using Ansible.
 
 As the creation of the template is a one-off task, this procedure has not been automated. The steps to create a VM template manually are outlined below.
 
@@ -19,7 +19,7 @@ Install Windows Server 2016:
 -   Once connected to the console, you will be placed in the BIOS setup screen. Select the `Boot` tab, click on CD-ROM Drive and move up the CD-ROM drive above the hard drive. This allows your Windows Server 2016 ISO image to be loaded first on boot. Save your changes and exit.
 -   Enter your choices for Language, Time/Currency Format, Keyboard and then select `Install Now`.
 -   Select the OS you want to install, and then select `Custom: Install Windows Only`.
--   Select drive 0, the 100 GB drive you specified earlier, as the location for installing windows.
+-   Select drive 0, the 100 GB drive you specified earlier, as the location for installing Windows.
 -   Add a password for the Administrator user.
 -   Install VMware Tools and reboot.
 

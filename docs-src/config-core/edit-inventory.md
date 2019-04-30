@@ -34,7 +34,7 @@ If you are using the legacy, standalone load balancers:
 |`[worker_lb]`|A group containing one single node which will be the load balancer for the worker nodes. Do not add more than one node under this group.
 |`[lbs]`|A group containing all the legacy standalone load balancers. This group will have 3 nodes, also defined individually in the three groups above.
 
-**Note:** Even if you are using the new `[loadbalancer]` group, you must still declare the legacy group `[lbs]` and its sub-groups in your inventory.
+**Note:** Even if you are using the new `[loadbalancer]` group, you must still declare the legacy group `[lbs]` and its sub-groups in your inventory. The sub-groups do not need to declare any entries if the new [loadbalancer] group is used.
 
 ## Worker nodes
 Individual groups facilitate the configuration of worker nodes, depending on the OS and whether the nodes are Virtual Machines or bare metal. 
@@ -247,9 +247,9 @@ In the `hosts` file:
 
 ```
 [vm_wrk_lnx] 
-worker01 ip_addr='10.0.0.10/16' esxi_host='esxi1.domain.local' 
-worker02 ip_addr='10.0.0.11/16' esxi_host='esxi1.domain.local' 
-worker03 ip_addr='10.0.0.12/16' esxi_host='esxi1.domain.local' cpus='16' ram'131072' 
+worker01 ip_addr='10.60.59.10/16' esxi_host='esxi1.domain.local' 
+worker02 ip_addr='10.60.59.11/16' esxi_host='esxi1.domain.local' 
+worker03 ip_addr='10.60.59.12/16' esxi_host='esxi1.domain.local' cpus='16' ram'131072' 
 ```
 
 

@@ -6,10 +6,10 @@ The procedure for enabling SSL between the universal forwarders and the Splunk i
 2.  Put your root CA certificate and your server certificate files in
 
     ```
-    /root/Docker-Synergy/files/splunk/linux/SPLUNK_HOME/etc/mycerts
+    files/splunk/linux/SPLUNK_HOME/etc/mycerts
     ```
 
-3.  Uncomment the `[sslConfig]` stanza in the file `/files/splunk/linux/SPLUNK_HOME/etc/system/local/server.conf` 
+3.  Uncomment the `[sslConfig]` stanza in the file `files/splunk/linux/SPLUNK_HOME/etc/system/local/server.conf` 
 
 ## Limitations
 
