@@ -1,3 +1,6 @@
+# This project is no longer supported.
+
+
 # Welcome to HPE Reference Configuration for Docker Containers as a Service on HPE Synergy Composable Infrastructure
 
 HPE Reference Configuration for Docker Containers as a Service on HPE Synergy Composable Infrastructure is a complete solution from Hewlett Packard Enterprise that includes all the hardware, software, professional services, and support you need to deploy a Containers-as-a-Service (CaaS) platform, allowing you to get up and running quickly and efficiently.
